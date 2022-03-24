@@ -6,6 +6,7 @@
 
 #include "io_display.h"
 #include "io_core.h"
+#include "io_utils.h"
 
 #define MIDI_COUNT 4
 
@@ -15,12 +16,15 @@ USBHub hub2(myusb);
 USBHub hub3(myusb);
 MIDIDevice midi[MIDI_COUNT] = MIDIDevice(myusb);
 
-void noteOnHandler(byte channel, byte note, byte velocity)
+MIDIDevice *midiController = NULL;
+MIDIDevice *midiGroovebox = NULL;
+
+void noteOnController(byte channel, byte note, byte velocity)
 {
     // When a USB device with multiple virtual cables is used,
     // midi[n].getCable() can be used to read which of the virtual
     // MIDI cables received this message.
-    Serial.print("Note On, ch=");
+    Serial.print("Note On controller, ch=");
     Serial.print(channel, DEC);
     Serial.print(", note=");
     Serial.print(note, DEC);
@@ -31,9 +35,9 @@ void noteOnHandler(byte channel, byte note, byte velocity)
     display.update();
 }
 
-void noteOffHandler(byte channel, byte note, byte velocity)
+void noteOffController(byte channel, byte note, byte velocity)
 {
-    Serial.print("Note Off, ch=");
+    Serial.print("Note Off controller, ch=");
     Serial.print(channel, DEC);
     Serial.print(", note=");
     Serial.print(note, DEC);
@@ -44,9 +48,9 @@ void noteOffHandler(byte channel, byte note, byte velocity)
     display.update();
 }
 
-void controlChangeHandler(byte channel, byte control, byte value)
+void controlChangeController(byte channel, byte control, byte value)
 {
-    Serial.print("Control Change, ch=");
+    Serial.print("Control Change controller, ch=");
     Serial.print(channel, DEC);
     Serial.print(", control=");
     Serial.print(control, DEC);
@@ -57,7 +61,7 @@ void controlChangeHandler(byte channel, byte control, byte value)
     display.update();
 }
 
-void sysExHandler(const uint8_t *data, uint16_t length, bool complete)
+void sysExHandler(MIDIDevice *midiTarget, const uint8_t *data, uint16_t length, bool complete)
 {
     Serial.printf("SysExHandler data (%d) %s\n", length, complete ? "complete" : "not complete");
     for (uint16_t i = 0; i < length; i++)
@@ -65,22 +69,61 @@ void sysExHandler(const uint8_t *data, uint16_t length, bool complete)
         Serial.printf("%d,", data[i]);
     }
     Serial.println("");
+
+    const uint8_t akai[] = {125, 0, 187, 61, 0, 185};
+    if (intArrayStartWith(akai, data, 0))
+    {
+        Serial.println("Is akai");
+        midiController = midiTarget;
+        midiController->setHandleNoteOn(noteOnController);
+        midiController->setHandleNoteOff(noteOffController);
+        midiController->setHandleControlChange(controlChangeController);
+        return;
+    }
+}
+// 125,122,187,61,92,185, // 125,122,187,61,85,185,
+// 113,36,3,
+// 96,241,245,24,246,255,71,
+// 253,233,255,
+
+void sysExHandler0(const uint8_t *data, uint16_t length, bool complete)
+{
+    sysExHandler(&midi[0], data, length, complete);
 }
 
-// 125,122,187,61,85,185,
+void sysExHandler1(const uint8_t *data, uint16_t length, bool complete)
+{
+    sysExHandler(&midi[1], data, length, complete);
+}
+
+void sysExHandler2(const uint8_t *data, uint16_t length, bool complete)
+{
+    sysExHandler(&midi[2], data, length, complete);
+}
+
+void sysExHandler3(const uint8_t *data, uint16_t length, bool complete)
+{
+    sysExHandler(&midi[3], data, length, complete);
+}
 
 void midiInit()
 {
     myusb.begin();
-    for (byte n = 0; n < MIDI_COUNT; n++)
-    {
-        midi[n].setHandleNoteOn(noteOnHandler);
-        midi[n].setHandleNoteOff(noteOffHandler);
-        midi[n].setHandleControlChange(controlChangeHandler);
-        midi[n].setHandleSysEx(sysExHandler);
-        // midi[n].setHandleClock
-        // midi[n].setHandleProgramChange
-    }
+    midi[0].setHandleSysEx(sysExHandler0);
+    midi[1].setHandleSysEx(sysExHandler1);
+    midi[2].setHandleSysEx(sysExHandler2);
+    midi[3].setHandleSysEx(sysExHandler3);
+
+    // for (byte n = 0; n < MIDI_COUNT; n++)
+    // {
+    //     midi[n].setHandleNoteOn(noteOnHandler);
+    //     midi[n].setHandleNoteOff(noteOffHandler);
+    //     midi[n].setHandleControlChange(controlChangeHandler);
+    //     // midi[n].setHandleSysEx(sysExHandler);
+    //     midi[n].setHandleSysEx(sysExHandlerYo(100 + n));
+    //     // midi[n].setHandleClock
+    //     // midi[n].setHandleProgramChange
+    // }
 }
 
 void midiLoop()
