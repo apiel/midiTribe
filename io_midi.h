@@ -14,10 +14,10 @@ USBHost myusb;
 USBHub hub1(myusb);
 USBHub hub2(myusb);
 USBHub hub3(myusb);
-MIDIDevice midi[MIDI_COUNT] = MIDIDevice(myusb);
+MIDIDevice_BigBuffer midi[MIDI_COUNT] = MIDIDevice_BigBuffer(myusb);
 
-MIDIDevice *midiController = NULL;
-MIDIDevice *midiGroovebox = NULL;
+MIDIDevice_BigBuffer *midiController = NULL;
+MIDIDevice_BigBuffer *midiGroovebox = NULL;
 
 void noteOnController(byte channel, byte note, byte velocity)
 {
@@ -61,71 +61,61 @@ void controlChangeController(byte channel, byte control, byte value)
     display.update();
 }
 
-void sysExHandler(MIDIDevice *midiTarget, const uint8_t *data, uint16_t length, bool complete)
+void noteOnGroovebox(byte channel, byte note, byte velocity)
 {
-    Serial.printf("SysExHandler data (%d) %s\n", length, complete ? "complete" : "not complete");
-    for (uint16_t i = 0; i < length; i++)
-    {
-        Serial.printf("%d,", data[i]);
-    }
+    // When a USB device with multiple virtual cables is used,
+    // midi[n].getCable() can be used to read which of the virtual
+    // MIDI cables received this message.
+    Serial.print("Note On Groovebox, ch=");
+    Serial.print(channel, DEC);
+    Serial.print(", note=");
+    Serial.print(note, DEC);
+    Serial.print(", velocity=");
+    Serial.println(velocity, DEC);
+
+    // controller.noteOnHandler(channel, note, velocity);
+    display.update();
+}
+
+void noteOffGroovebox(byte channel, byte note, byte velocity)
+{
+    Serial.print("Note Off Groovebox, ch=");
+    Serial.print(channel, DEC);
+    Serial.print(", note=");
+    Serial.print(note, DEC);
+    Serial.print(", velocity=");
+    Serial.println(velocity, DEC);
+
+    // controller.noteOffHandler(channel, note, velocity);
+    display.update();
+}
+
+void controlChangeGroovebox(byte channel, byte control, byte value)
+{
+    Serial.print("Control Change Groovebox, ch=");
+    Serial.print(channel, DEC);
+    Serial.print(", control=");
+    Serial.print(control, DEC);
+    Serial.print(", value=");
+    Serial.println(value, DEC);
+
+    // controller.controlChangeHandler(channel, control, value);
+    display.update();
+}
+
+void sysExHandlerGroovebox(const uint8_t *data, uint16_t length, bool complete)
+{
+    Serial.printf("sysExHandlerGroovebox data (%d) %s\n", length, complete ? "complete" : "not complete");
+    printIntArray(data, length);
     Serial.println("");
-
-    const uint8_t akai[] = {125, 0, 187, 61, 0, 185};
-    if (intArrayStartWith(akai, data, 0))
-    {
-        Serial.println("Is akai");
-        midiController = midiTarget;
-        midiController->setHandleNoteOn(noteOnController);
-        midiController->setHandleNoteOff(noteOffController);
-        midiController->setHandleControlChange(controlChangeController);
-        return;
-    }
-}
-// 125,122,187,61,92,185, // 125,122,187,61,85,185,
-// 113,36,3,
-// 96,241,245,24,246,255,71,
-// 253,233,255,
-
-void sysExHandler0(const uint8_t *data, uint16_t length, bool complete)
-{
-    sysExHandler(&midi[0], data, length, complete);
-}
-
-void sysExHandler1(const uint8_t *data, uint16_t length, bool complete)
-{
-    sysExHandler(&midi[1], data, length, complete);
-}
-
-void sysExHandler2(const uint8_t *data, uint16_t length, bool complete)
-{
-    sysExHandler(&midi[2], data, length, complete);
-}
-
-void sysExHandler3(const uint8_t *data, uint16_t length, bool complete)
-{
-    sysExHandler(&midi[3], data, length, complete);
 }
 
 void midiInit()
 {
     myusb.begin();
-    midi[0].setHandleSysEx(sysExHandler0);
-    midi[1].setHandleSysEx(sysExHandler1);
-    midi[2].setHandleSysEx(sysExHandler2);
-    midi[3].setHandleSysEx(sysExHandler3);
-
-    // for (byte n = 0; n < MIDI_COUNT; n++)
-    // {
-    //     midi[n].setHandleNoteOn(noteOnHandler);
-    //     midi[n].setHandleNoteOff(noteOffHandler);
-    //     midi[n].setHandleControlChange(controlChangeHandler);
-    //     // midi[n].setHandleSysEx(sysExHandler);
-    //     midi[n].setHandleSysEx(sysExHandlerYo(100 + n));
-    //     // midi[n].setHandleClock
-    //     // midi[n].setHandleProgramChange
-    // }
 }
 
+unsigned long lastMidiProductCheck = millis();
 void midiLoop()
 {
     myusb.Task();
@@ -133,6 +123,37 @@ void midiLoop()
     {
         while (midi[n].read())
             ;
+    }
+
+    // might find a way to detect disconnect
+    // in /home/alex/dev/arduino/arduino-1.8.19/hardware/teensy/avr/libraries/USBHost_t36/USBHost_t36.h
+    // enable debug with #define USBHOST_PRINT_DEBUG true
+    if ((midiGroovebox == NULL || midiController == NULL) && millis() - lastMidiProductCheck >= 1000) // check every seconds
+    {
+        for (byte n = 0; n < MIDI_COUNT; n++)
+        {
+            Serial.printf("\nVendor %d: %i %s %i %s", n, midi[n].idVendor(), midi[n].manufacturer(), midi[n].idProduct(), midi[n].product());
+            // printIntArray(midi[n].idVendor());
+
+            // 09E8 = 2536, 007C = 124
+            // Vendor 0: 2536 124 MPK mini
+            if (midi[n].idVendor() == 2536 && midi[n].idProduct() == 124)
+            {
+                midiController = &midi[n];
+                midiController->setHandleNoteOn(noteOnController);
+                midiController->setHandleNoteOff(noteOffController);
+                midiController->setHandleControlChange(controlChangeController);
+            }
+            else if (midi[n].idVendor() == 2372 && midi[n].idProduct() == 301)
+            {
+                midiGroovebox = &midi[n];
+                midiGroovebox->setHandleNoteOn(noteOnController);
+                midiGroovebox->setHandleNoteOff(noteOffController);
+                midiGroovebox->setHandleControlChange(controlChangeController);
+                midiGroovebox->setHandleSysEx(sysExHandlerGroovebox);
+            }
+        }
+        lastMidiProductCheck = millis();
     }
 }
 

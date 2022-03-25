@@ -1,0 +1,527 @@
+Mini synth init
+USB2 PLL running
+ reset waited 6
+USBHS_ASYNCLISTADDR = 0
+USBHS_PERIODICLISTBASE = 20003000
+periodictable = 20003000
+port change: 10001803
+    connect
+  begin reset
+port change: 18001205
+  port enabled
+  end recovery
+new_Device: 480 Mbit/sec
+new_Pipe
+enumeration:
+enumeration:
+enumeration:
+Device Descriptor:
+  12 01 00 02 09 00 01 40 40 1A 01 01 11 01 00 01 00 01 
+    VendorID = 1A40, ProductID = 0101, Version = 0111
+    Class/Subclass/Protocol = 9(Hub) / 0 / 1(Single-TT)
+    Number of Configurations = 1
+enumeration:
+enumeration:
+Product: USB 2.0 Hub
+enumeration:
+Config data length = 25
+enumeration:
+Configuration Descriptor:
+  09 02 19 00 01 01 00 E0 32 
+    NumInterfaces = 1
+    ConfigurationValue = 1
+  09 04 00 00 01 09 00 00 00 
+    Interface = 0
+    Number of endpoints = 1
+    Class/Subclass/Protocol = 9(Hub) / 0 / 0
+  07 05 81 03 01 00 0C 
+    Endpoint = 1 IN
+    Type = Interrupt
+    Max Size = 1
+    Polling Interval = 12
+enumeration:
+USBHub memory usage = 960
+USBHub claim_device this=200031E0
+found possible interface, altsetting=0
+number of interfaces found = 1
+USBHub control callback
+09 29 04 00 00 32 64 00 FF 00 00 00 00 00 00 00 
+Hub ports = 4
+USBHub control callback
+USBHub control callback
+USBHub control callback
+USBHub control callback
+power turned on to all ports
+device addr = 1
+new_Pipe
+allocate_interrupt_pipe_bandwidth
+  ep interval = 12
+  interval = 256
+ best_bandwidth = 2, at offset = 0
+pipe cap1 = F0012101
+HUB Callback (member)
+status = 8
+getstatus, port = 3
+USBHub control callback
+01 01 01 00 
+New Port Status
+  status=10101  port=3
+  state=0
+  Device is present: 
+  Has Power
+USBHub control callback
+Port Status Cleared, port=3
+timer event (19999 us): Debounce Timer, this = 200031E0, timer = 200034F8
+ports in use bitmask = 8
+getstatus, port = 3
+USBHub control callback
+01 01 00 00 
+New Port Status
+  status=101  port=3
+  state=2
+  Device is present: 
+  Has Power
+HUB Callback (member)
+status = 4
+getstatus, port = 2
+USBHub control callback
+01 01 01 00 
+New Port Status
+  status=10101  port=2
+  state=0
+  Device is present: 
+  Has Power
+USBHub control callback
+Port Status Cleared, port=2
+timer event (20000 us): Debounce Timer, this = 200031E0, timer = 200034F8
+ports in use bitmask = C
+getstatus, port = 2
+deferred getstatus, port = 3
+USBHub control callback
+01 01 00 00 
+New Port Status
+  status=101  port=2
+  state=2
+  Device is present: 
+  Has Power
+getstatus, port = 3
+USBHub control callback
+01 01 00 00 
+New Port Status
+  status=101  port=3
+  state=3
+  Device is present: 
+  Has Power
+timer event (20000 us): Debounce Timer, this = 200031E0, timer = 200034F8
+ports in use bitmask = C
+getstatus, port = 2
+deferred getstatus, port = 3
+USBHub control callback
+01 01 00 00 
+New Port Status
+  status=101  port=2
+  state=3
+  Device is present: 
+  Has Power
+getstatus, port = 3
+USBHub control callback
+01 01 00 00 
+New Port Status
+  status=101  port=3
+  state=4
+  Device is present: 
+  Has Power
+timer event (20000 us): Debounce Timer, this = 200031E0, timer = 200034F8
+ports in use bitmask = C
+getstatus, port = 2
+deferred getstatus, port = 3
+USBHub control callback
+01 01 00 00 
+New Port Status
+  status=101  port=2
+  state=4
+  Device is present: 
+  Has Power
+getstatus, port = 3
+USBHub control callback
+01 01 00 00 
+New Port Status
+  status=101  port=3
+  state=5
+  Device is present: 
+  Has Power
+timer event (20000 us): Debounce Timer, this = 200031E0, timer = 200034F8
+ports in use bitmask = C
+getstatus, port = 2
+deferred getstatus, port = 3
+USBHub control callback
+01 01 00 00 
+New Port Status
+  status=101  port=2
+  state=5
+  Device is present: 
+  Has Power
+getstatus, port = 3
+USBHub control callback
+01 01 00 00 
+New Port Status
+  status=101  port=3
+  state=6
+  Device is present: 
+  Has Power
+sending reset
+send_setreset
+USBHub control callback
+unhandled setup, message = 40323
+timer event (20000 us): Debounce Timer, this = 200031E0, timer = 200034F8
+ports in use bitmask = 4
+getstatus, port = 2
+USBHub control callback
+01 01 00 00 
+New Port Status
+  status=101  port=2
+  state=6
+  Device is present: 
+  Has Power
+HUB Callback (member)
+status = 8
+getstatus, port = 3
+USBHub control callback
+03 05 10 00 
+New Port Status
+  status=100503  port=3
+  state=7
+  Device is present: 
+  Enabled, speed = 480 Mbit/sec
+  Has Power
+USBHub control callback
+unhandled setup, message = 140123
+timer event (20000 us): Debounce Timer, this = 200031E0, timer = 200034F8
+ports in use bitmask = 4
+getstatus, port = 2
+USBHub control callback
+01 01 00 00 
+New Port Status
+  status=101  port=2
+  state=6
+  Device is present: 
+  Has Power
+timer event (24999 us): Hello, I'm resettimer, this = 200031E0, timer = 20003518
+port_doing_reset = 3
+PORT_RECOVERY
+new_Device: 480 Mbit/sec
+new_Pipe
+enumeration:
+enumeration:
+enumeration:
+Device Descriptor:
+  12 01 00 02 00 00 00 40 44 09 2D 01 00 01 01 02 00 01 
+    VendorID = 0944, ProductID = 012D, Version = 0100
+    Class/Subclass/Protocol = 0 / 0 / 0
+    Number of Configurations = 1
+enumeration:
+enumeration:
+Manufacturer: KORG INC.
+enumeration:
+Product: electribe2
+enumeration:
+Config data length = 83
+enumeration:
+Configuration Descriptor:
+  09 02 53 00 01 01 00 C0 00 
+    NumInterfaces = 1
+    ConfigurationValue = 1
+  09 04 00 00 02 01 03 00 00 
+    Interface = 0
+    Number of endpoints = 2
+    Class/Subclass/Protocol = 1 / 3 / 0
+  07 24 01 00 01 25 00 
+  06 24 02 01 10 03 
+  09 24 03 02 40 01 10 01 00 
+  09 24 03 01 30 01 20 01 04 
+  06 24 02 02 20 00 
+  09 05 01 02 00 02 00 00 00 
+    Endpoint = 1 OUT
+    Type = Bulk
+    Max Size = 512
+    Polling Interval = 0
+  05 25 01 01 10 
+  09 05 81 02 00 02 00 00 00 
+    Endpoint = 1 IN
+    Type = Bulk
+    Max Size = 512
+    Polling Interval = 0
+  05 25 01 01 30 
+enumeration:
+USBHub memory usage = 960
+USBHub claim_device this=200035A0
+USBHub memory usage = 960
+USBHub claim_device this=20003960
+Descriptor 4 = INTERFACE
+MIDIDevice claim this=20003D20
+len = 74
+  Interface is MIDI
+type: 36, len: 7
+    MIDI Header (ignored)
+type: 36, len: 6
+    MIDI IN Jack (ignored)
+type: 36, len: 9
+    MIDI OUT Jack (ignored)
+type: 36, len: 9
+    MIDI OUT Jack (ignored)
+type: 36, len: 6
+    MIDI IN Jack (ignored)
+type: 5, len: 9
+    MIDI Endpoint: 1
+      tx_size = 512
+type: 37, len: 5
+    MIDI Endpoint Jack Association (ignored)
+type: 5, len: 9
+    MIDI Endpoint: 81
+      rx_size = 512
+type: 37, len: 5
+    MIDI Endpoint Jack Association (ignored)
+MIDIDevice claim this=20004420
+len = 74
+  Interface is MIDI
+type: 36, len: 7
+    MIDI Header (ignored)
+type: 36, len: 6
+    MIDI IN Jack (ignored)
+type: 36, len: 9
+    MIDI OUT Jack (ignored)
+type: 36, len: 9
+    MIDI OUT Jack (ignored)
+type: 36, len: 6
+    MIDI IN Jack (ignored)
+type: 5, len: 9
+    MIDI Endpoint: 1
+      tx_size = 512
+type: 37, len: 5
+    MIDI Endpoint Jack Association (ignored)
+type: 5, len: 9
+    MIDI Endpoint: 81
+      rx_size = 512
+type: 37, len: 5
+    MIDI Endpoint Jack Association (ignored)
+MIDIDevice claim this=20004B20
+len = 74
+  Interface is MIDI
+type: 36, len: 7
+    MIDI Header (ignored)
+type: 36, len: 6
+    MIDI IN Jack (ignored)
+type: 36, len: 9
+    MIDI OUT Jack (ignored)
+type: 36, len: 9
+    MIDI OUT Jack (ignored)
+type: 36, len: 6
+    MIDI IN Jack (ignored)
+type: 5, len: 9
+    MIDI Endpoint: 1
+      tx_size = 512
+type: 37, len: 5
+    MIDI Endpoint Jack Association (ignored)
+type: 5, len: 9
+    MIDI Endpoint: 81
+      rx_size = 512
+type: 37, len: 5
+    MIDI Endpoint Jack Association (ignored)
+MIDIDevice claim this=20005220
+len = 74
+  Interface is MIDI
+type: 36, len: 7
+    MIDI Header (ignored)
+type: 36, len: 6
+    MIDI IN Jack (ignored)
+type: 36, len: 9
+    MIDI OUT Jack (ignored)
+type: 36, len: 9
+    MIDI OUT Jack (ignored)
+type: 36, len: 6
+    MIDI IN Jack (ignored)
+type: 5, len: 9
+    MIDI Endpoint: 1
+      tx_size = 512
+type: 37, len: 5
+    MIDI Endpoint Jack Association (ignored)
+type: 5, len: 9
+    MIDI Endpoint: 81
+      rx_size = 512
+type: 37, len: 5
+    MIDI Endpoint Jack Association (ignored)
+Descriptor 36 =  ???
+Descriptor 36 =  ???
+Descriptor 36 =  ???
+Descriptor 36 =  ???
+Descriptor 36 =  ???
+Descriptor 5 = ENDPOINT
+Descriptor 37 =  ???
+Descriptor 5 = ENDPOINT
+Descriptor 37 =  ???
+timer event (20000 us): Debounce Timer, this = 200031E0, timer = 200034F8
+ports in use bitmask = 4
+getstatus, port = 2
+USBHub control callback
+01 01 00 00 
+New Port Status
+  status=101  port=2
+  state=6
+  Device is present: 
+  Has Power
+sending reset
+send_setreset
+USBHub control callback
+unhandled setup, message = 40323
+timer event (20000 us): Debounce Timer, this = 200031E0, timer = 200034F8
+ports in use bitmask = 0
+HUB Callback (member)
+status = 4
+getstatus, port = 2
+USBHub control callback
+03 01 10 00 
+New Port Status
+  status=100103  port=2
+  state=7
+  Device is present: 
+  Enabled, speed = 12 Mbit/sec
+  Has Power
+USBHub control callback
+unhandled setup, message = 140123
+timer event (24999 us): Hello, I'm resettimer, this = 200031E0, timer = 20003518
+port_doing_reset = 2
+PORT_RECOVERY
+new_Device: 12 Mbit/sec
+new_Pipe
+enumeration:
+enumeration:
+enumeration:
+Device Descriptor:
+  12 01 10 01 00 00 00 10 E8 09 7C 00 00 01 01 02 00 01 
+    VendorID = 09E8, ProductID = 007C, Version = 0100
+    Class/Subclass/Protocol = 0 / 0 / 0
+    Number of Configurations = 1
+enumeration:
+enumeration:
+Manufacturer: AKAI PROFESSIONAL,LP
+enumeration:
+Product: MPK mini
+enumeration:
+Config data length = 101
+enumeration:
+Configuration Descriptor:
+  09 02 65 00 02 01 00 A0 32 
+    NumInterfaces = 2
+    ConfigurationValue = 1
+  09 04 00 00 00 01 01 00 00 
+    Interface = 0
+    Number of endpoints = 0
+    Class/Subclass/Protocol = 1 / 1 / 0
+  09 24 01 00 01 09 00 01 01 
+  09 04 01 00 02 01 03 00 00 
+    Interface = 1
+    Number of endpoints = 2
+    Class/Subclass/Protocol = 1 / 3 / 0
+  07 24 01 00 01 41 00 
+  06 24 02 01 01 00 
+  06 24 02 02 02 00 
+  09 24 03 01 03 01 02 01 00 
+  09 24 03 02 04 01 01 01 00 
+  09 05 01 02 40 00 00 00 00 
+    Endpoint = 1 OUT
+    Type = Bulk
+    Max Size = 64
+    Polling Interval = 0
+  05 25 01 01 01 
+  09 05 81 02 40 00 00 00 00 
+    Endpoint = 1 IN
+    Type = Bulk
+    Max Size = 64
+    Polling Interval = 0
+  05 25 01 01 03 
+enumeration:
+USBHub memory usage = 960
+USBHub claim_device this=200035A0
+USBHub memory usage = 960
+USBHub claim_device this=20003960
+Descriptor 4 = INTERFACE
+MIDIDevice claim this=20003D20
+len = 92
+  Interface is unknown (might be Yahama)
+type: 36, len: 9
+    MIDI Header (ignored)
+type: 4, len: 9
+MIDIDevice claim this=20004420
+len = 92
+  Interface is unknown (might be Yahama)
+type: 36, len: 9
+    MIDI Header (ignored)
+type: 4, len: 9
+MIDIDevice claim this=20004B20
+len = 92
+  Interface is unknown (might be Yahama)
+type: 36, len: 9
+    MIDI Header (ignored)
+type: 4, len: 9
+MIDIDevice claim this=20005220
+len = 92
+  Interface is unknown (might be Yahama)
+type: 36, len: 9
+    MIDI Header (ignored)
+type: 4, len: 9
+Descriptor 36 =  ???
+Descriptor 4 = INTERFACE
+MIDIDevice claim this=20003D20
+len = 74
+  Interface is MIDI
+type: 36, len: 7
+    MIDI Header (ignored)
+type: 36, len: 6
+    MIDI IN Jack (ignored)
+type: 36, len: 6
+    MIDI IN Jack (ignored)
+type: 36, len: 9
+    MIDI OUT Jack (ignored)
+type: 36, len: 9
+    MIDI OUT Jack (ignored)
+type: 5, len: 9
+    MIDI Endpoint: 1
+      tx_size = 64
+type: 37, len: 5
+    MIDI Endpoint Jack Association (ignored)
+type: 5, len: 9
+    MIDI Endpoint: 81
+      rx_size = 64
+type: 37, len: 5
+    MIDI Endpoint Jack Association (ignored)
+new_Pipe
+new_Pipe
+Descriptor 36 =  ???
+Descriptor 36 =  ???
+Descriptor 36 =  ???
+Descriptor 36 =  ???
+Descriptor 36 =  ???
+Descriptor 5 = ENDPOINT
+Descriptor 37 =  ???
+Descriptor 5 = ENDPOINT
+Descriptor 37 =  ???
+MIDIDevice Receive
+  MIDI Data: C1 E9 A2 EA 47 71 24 03 25 60 11 91 24 F1 95 18 17 F6 FF 47 CC EC AB DF 2F 28 C0 AF D7 FF E9 F7 A4 7D 7A BB 17 3D 55 B9 7D 2A 19 51 BA 98 28 A9 55 B9 77 07 8D E2 AF AA FC F2 AA AA 7D DE D9 F8 
+avail = 63
+queue another receive packet
+read: EAA2E9C1
+read: 3247147
+read: 91116025
+read: 1895F124
+read: 47FFF617
+read: DFABECCC
+read: AFC0282F
+read: F7E9FFD7
+read: BB7A7DA4
+read: B9553D17
+read: 51192A7D
+read: A92898BA
+read: 777B955
+read: AAAFE28D
+read: AAAAF2FC
+read: F8D9DE7D
