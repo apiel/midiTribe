@@ -8,7 +8,7 @@
 #include "io_core.h"
 #include "io_utils.h"
 
-#define MIDI_COUNT 4
+#define MIDI_COUNT 3
 
 USBHost myusb;
 USBHub hub1(myusb);
@@ -21,9 +21,6 @@ MIDIDevice_BigBuffer *midiGroovebox = NULL;
 
 void noteOnController(byte channel, byte note, byte velocity)
 {
-    // When a USB device with multiple virtual cables is used,
-    // midi[n].getCable() can be used to read which of the virtual
-    // MIDI cables received this message.
     Serial.print("Note On controller, ch=");
     Serial.print(channel, DEC);
     Serial.print(", note=");
@@ -63,9 +60,6 @@ void controlChangeController(byte channel, byte control, byte value)
 
 void noteOnGroovebox(byte channel, byte note, byte velocity)
 {
-    // When a USB device with multiple virtual cables is used,
-    // midi[n].getCable() can be used to read which of the virtual
-    // MIDI cables received this message.
     Serial.print("Note On Groovebox, ch=");
     Serial.print(channel, DEC);
     Serial.print(", note=");
@@ -115,6 +109,7 @@ void midiInit()
     myusb.begin();
 }
 
+bool midiNeedToFindProduct = true;
 unsigned long lastMidiProductCheck = millis();
 void midiLoop()
 {
@@ -128,7 +123,7 @@ void midiLoop()
     // might find a way to detect disconnect
     // in /home/alex/dev/arduino/arduino-1.8.19/hardware/teensy/avr/libraries/USBHost_t36/USBHost_t36.h
     // enable debug with #define USBHOST_PRINT_DEBUG true
-    if ((midiGroovebox == NULL || midiController == NULL) && millis() - lastMidiProductCheck >= 1000) // check every seconds
+    if (midiNeedToFindProduct && millis() - lastMidiProductCheck >= 1000) // check every seconds
     {
         for (byte n = 0; n < MIDI_COUNT; n++)
         {
@@ -154,6 +149,7 @@ void midiLoop()
             }
         }
         lastMidiProductCheck = millis();
+        midiNeedToFindProduct = midiGroovebox == NULL || midiController == NULL;
     }
 }
 
