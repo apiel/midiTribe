@@ -2,6 +2,7 @@
 #define IO_LOOP_H_
 
 #include <Arduino.h>
+#include <USBHost_t36.h>
 
 #include "Pattern.h"
 #include "io_patterns.h"
@@ -12,10 +13,9 @@
 class IO_Loop
 {
 private:
-    IO_AudioSynth *env;
-
     byte currentStep = 0;
     Step lastStep;
+    MIDIDevice_BigBuffer *midiGroovebox = NULL;
 
 public:
     byte id = 0;
@@ -30,15 +30,14 @@ public:
     byte nextPattern = 0;
     Pattern *pattern = &patterns[nextPattern];
 
-    IO_Loop(IO_AudioSynth *_env, byte _id) : IO_AudioLoop(_env)
+    IO_Loop()
     {
-        id = _id;
+        setCurrentPatternSelector(currentPatternSelector);
     }
 
-    IO_Loop(IO_AudioSynth *_env)
+    void setMidi(MIDIDevice_BigBuffer *_midiGroovebox)
     {
-        env = _env;
-        setCurrentPatternSelector(currentPatternSelector);
+        midiGroovebox = _midiGroovebox;
     }
 
     void setPatternSelector(byte pos, byte value)
@@ -54,26 +53,26 @@ public:
 
     void next()
     {
-        if (!lastStep.slide)
+        if (midiGroovebox)
         {
-            env->noteOff(lastStep.note);
-            // to avoid repeating this again, let set slide to true
-            lastStep.slide = true;
-        }
-
-        if (play)
-        {
-            Step *step = &pattern->steps[currentStep];
-            if (step->note > 0)
+            if (!lastStep.slide)
             {
-                lastStep.set(step);
-                // add note difference to note
-                lastStep.note += (int)play - (int)REF_NOTE;
-                env->noteOn(lastStep.note, lastStep.velocity);
-                // could have mode with no substain here
-                // and directly noteOff
-                // for drum?
-                // but should this be part of the envelop and not from the sequencer
+                midiGroovebox->sendNoteOff(lastStep.note, lastStep.velocity, 1); // ch1 for test
+                // to avoid repeating this again, let set slide to true
+                lastStep.slide = true;
+            }
+
+            if (play)
+            {
+                Step *step = &pattern->steps[currentStep];
+                if (step->note > 0)
+                {
+                    lastStep.set(step);
+                    // add note difference to note
+                    lastStep.note += (int)play - (int)REF_NOTE;
+                    // TODO: use velocity from keyboard!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    midiGroovebox->sendNoteOn(lastStep.note, lastStep.velocity, 1); // ch1 for test
+                }
             }
         }
         currentStep = (currentStep + 1) % pattern->stepCount;
@@ -85,7 +84,7 @@ public:
         }
     }
 
-    void noteOn(byte note)
+    void noteOn(byte note) // byte velocity
     {
         if (active)
         {

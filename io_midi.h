@@ -28,7 +28,7 @@ void noteOnController(byte channel, byte note, byte velocity)
     Serial.print(", velocity=");
     Serial.println(velocity, DEC);
 
-    // controller.noteOnHandler(channel, note, velocity);
+    controller.noteOnHandler(channel, note, velocity);
     display.update();
 }
 
@@ -41,7 +41,7 @@ void noteOffController(byte channel, byte note, byte velocity)
     Serial.print(", velocity=");
     Serial.println(velocity, DEC);
 
-    // controller.noteOffHandler(channel, note, velocity);
+    controller.noteOffHandler(channel, note, velocity);
     display.update();
 }
 
@@ -54,7 +54,7 @@ void controlChangeController(byte channel, byte control, byte value)
     Serial.print(", value=");
     Serial.println(value, DEC);
 
-    // controller.controlChangeHandler(channel, control, value);
+    controller.controlChangeHandler(channel, control, value);
     display.update();
 }
 
