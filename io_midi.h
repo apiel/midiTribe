@@ -128,7 +128,6 @@ void midiLoop()
         for (byte n = 0; n < MIDI_COUNT; n++)
         {
             Serial.printf("\nVendor %d: %i %s %i %s", n, midi[n].idVendor(), midi[n].manufacturer(), midi[n].idProduct(), midi[n].product());
-            // printIntArray(midi[n].idVendor());
 
             // 09E8 = 2536, 007C = 124
             // Vendor 0: 2536 124 MPK mini
@@ -139,6 +138,7 @@ void midiLoop()
                 midiController->setHandleNoteOff(noteOffController);
                 midiController->setHandleControlChange(controlChangeController);
             }
+            // 0944 = 2372, 012D = 301 Korg electribe2
             else if (midi[n].idVendor() == 2372 && midi[n].idProduct() == 301)
             {
                 midiGroovebox = &midi[n];
