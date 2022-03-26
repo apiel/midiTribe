@@ -104,6 +104,11 @@ void sysExHandlerGroovebox(const uint8_t *data, uint16_t length, bool complete)
     Serial.println("");
 }
 
+void clockHandlerGroovebox() {
+    // Serial.println("clock");
+    clockHandler();
+}
+
 void midiInit()
 {
     myusb.begin();
@@ -146,6 +151,7 @@ void midiLoop()
                 midiGroovebox->setHandleNoteOff(noteOffController);
                 midiGroovebox->setHandleControlChange(controlChangeController);
                 midiGroovebox->setHandleSysEx(sysExHandlerGroovebox);
+                midiGroovebox->setHandleClock(clockHandlerGroovebox);
                 controller.setMidiGroovebox(midiGroovebox);
             }
         }
