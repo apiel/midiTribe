@@ -39,15 +39,13 @@ protected:
     IO_Display *display;
 
     bool modeSustainPressed = false;
-    byte currentChannel = 0;
+    byte currentChannel = 1;
 
     IO_ControllerAkaiMPKminiLock modeLock;
     IO_ControllerAkaiMPKminiLiveLoop modeLiveLoop;
     IO_ControllerAkaiMPKminiLiveSynth modeLiveSynth;
 
     // byte padPressed = 0;
-
-    // IO_Loop *getLoop(byte pos) { return loops[0]; } // return loops[pos % SYNTH_COUNT]; }
 
     const char *getModeName()
     {
@@ -65,7 +63,7 @@ protected:
 
 public:
     IO_ControllerAkaiMPKmini(IO_Display *_display, IO_Loop **_loops) : modeLock(_display),
-                                                                       modeLiveLoop(_display, _loops),
+                                                                       modeLiveLoop(_display, _loops, &currentChannel),
                                                                        modeLiveSynth(_display, &currentChannel)
     {
         display = _display;

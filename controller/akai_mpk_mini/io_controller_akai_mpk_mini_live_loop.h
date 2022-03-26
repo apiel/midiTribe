@@ -10,31 +10,31 @@ class IO_ControllerAkaiMPKminiLiveLoop
 {
 protected:
     IO_Loop **loops;
-    IO_Loop *loop;
     IO_Display *display;
 
     byte currentPattern = 0;
     Pattern *pattern;
 
-    IO_Loop *getLoop(byte pos) { return loops[0]; } // return loops[pos % SYNTH_COUNT]; }
+    byte *currentChannel;
+
+    IO_Loop *getLoop() { return loops[(*currentChannel - 1) % 16]; }
 
 public:
-    IO_ControllerAkaiMPKminiLiveLoop(IO_Display *_display, IO_Loop **_loops)
+    IO_ControllerAkaiMPKminiLiveLoop(IO_Display *_display, IO_Loop **_loops, byte *_currentChannel)
     {
         display = _display;
         loops = _loops;
-        loop = getLoop(0);
+        currentChannel = _currentChannel;
     }
 
     void noteOnHandler(byte channel, byte note, byte velocity)
     {
-        // here shoudl be channel from current
-        loop->noteOn(4, note, velocity);
+        getLoop()->noteOn(*currentChannel, note, velocity);
     }
 
     void noteOffHandler(byte channel, byte note, byte velocity)
     {
-        loop->noteOff(note);
+        getLoop()->noteOff(note);
     }
 
     void controlChangeHandler(byte channel, byte control, byte value)
