@@ -28,7 +28,8 @@ public:
 
     void noteOnHandler(byte channel, byte note, byte velocity)
     {
-        loop->noteOn(note);
+        // here shoudl be channel from current
+        loop->noteOn(4, note, velocity);
     }
 
     void noteOffHandler(byte channel, byte note, byte velocity)

@@ -12,16 +12,20 @@
 
 class IO_Loop
 {
-private:
+protected:
     byte currentStep = 0;
     Step lastStep;
     MIDIDevice_BigBuffer *midiGroovebox = NULL;
+    byte velocity = 100;
+    byte nextVelocity = 100;
+
+    byte nextToPlay = 0;
+
 
 public:
-    byte id = 0;
+    byte channel = 1;
     bool active = true;
     bool modeSingleLoop = true;
-    byte nextToPlay = 0;
     byte play = 0;
     byte previousLoopNote = 0;
 
@@ -57,8 +61,8 @@ public:
         {
             if (!lastStep.slide)
             {
-                midiGroovebox->sendNoteOff(lastStep.note, lastStep.velocity, 1); // ch1 for test
-                // to avoid repeating this again, let set slide to true
+                midiGroovebox->sendNoteOff(lastStep.note, lastStep.velocity, channel);
+                // To avoid repeating this again, let set slide to true
                 lastStep.slide = true;
             }
 
@@ -68,10 +72,9 @@ public:
                 if (step->note > 0)
                 {
                     lastStep.set(step);
-                    // add note difference to note
+                    // Add note difference to note
                     lastStep.note += (int)play - (int)REF_NOTE;
-                    // TODO: use velocity from keyboard!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    midiGroovebox->sendNoteOn(lastStep.note, lastStep.velocity, 1); // ch1 for test
+                    midiGroovebox->sendNoteOn(lastStep.note, velocity, channel);
                 }
             }
         }
@@ -81,13 +84,16 @@ public:
         {
             pattern = &patterns[nextPattern];
             play = nextToPlay ? nextToPlay : 0;
+            velocity = nextVelocity;
         }
     }
 
-    void noteOn(byte note) // byte velocity
+    void noteOn(byte _channel, byte note, byte _velocity)
     {
         if (active)
         {
+            channel = _channel;
+            nextVelocity = _velocity;
             nextToPlay = note;
         }
     }

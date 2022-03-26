@@ -104,7 +104,8 @@ void sysExHandlerGroovebox(const uint8_t *data, uint16_t length, bool complete)
     Serial.println("");
 }
 
-void clockHandlerGroovebox() {
+void clockHandlerGroovebox()
+{
     // Serial.println("clock");
     clockHandler();
 }
@@ -153,6 +154,10 @@ void midiLoop()
                 midiGroovebox->setHandleSysEx(sysExHandlerGroovebox);
                 midiGroovebox->setHandleClock(clockHandlerGroovebox);
                 controller.setMidiGroovebox(midiGroovebox);
+                for (byte i = 0; i < 16; i++)
+                {
+                    loopsPtr[i]->setMidi(midiGroovebox);
+                }
             }
         }
         lastMidiProductCheck = millis();

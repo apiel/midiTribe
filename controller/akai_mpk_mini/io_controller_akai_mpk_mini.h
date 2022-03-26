@@ -7,6 +7,7 @@
 #include "io_loop.h"
 #include "io_display.h"
 #include "io_controller_akai_mpk_mini_lock.h"
+#include "io_controller_akai_mpk_mini_live_loop.h"
 #include "io_controller_akai_mpk_mini_live_synth.h"
 
 #define PAD_CHANNEL 10
@@ -41,7 +42,9 @@ protected:
     byte currentChannel = 0;
 
     IO_ControllerAkaiMPKminiLock modeLock;
+    IO_ControllerAkaiMPKminiLiveLoop modeLiveLoop;
     IO_ControllerAkaiMPKminiLiveSynth modeLiveSynth;
+
     // byte padPressed = 0;
 
     // IO_Loop *getLoop(byte pos) { return loops[0]; } // return loops[pos % SYNTH_COUNT]; }
@@ -61,7 +64,9 @@ protected:
     }
 
 public:
-    IO_ControllerAkaiMPKmini(IO_Display *_display, IO_Loop **_loops) : modeLock(_display), modeLiveSynth(_display, &currentChannel)
+    IO_ControllerAkaiMPKmini(IO_Display *_display, IO_Loop **_loops) : modeLock(_display),
+                                                                       modeLiveLoop(_display, _loops),
+                                                                       modeLiveSynth(_display, &currentChannel)
     {
         display = _display;
         loops = _loops;
@@ -95,6 +100,7 @@ public:
         switch (mode)
         {
         case MODE_LIVE_LOOP:
+            modeLiveLoop.noteOnHandler(channel, note, velocity);
             break;
         case MODE_LIVE_SYNTH:
             modeLiveSynth.noteOnHandler(channel, note, velocity);
@@ -116,6 +122,7 @@ public:
         switch (mode)
         {
         case MODE_LIVE_LOOP:
+            modeLiveLoop.noteOffHandler(channel, note, velocity);
             break;
         case MODE_LIVE_SYNTH:
             modeLiveSynth.noteOffHandler(channel, note, velocity);
@@ -144,6 +151,7 @@ public:
         switch (mode)
         {
         case MODE_LIVE_LOOP:
+            modeLiveLoop.controlChangeHandler(channel, control, value);
             break;
         case MODE_LIVE_SYNTH:
             modeLiveSynth.controlChangeHandler(channel, control, value);
