@@ -146,6 +146,7 @@ void midiLoop()
                 midiGroovebox->setHandleNoteOff(noteOffController);
                 midiGroovebox->setHandleControlChange(controlChangeController);
                 midiGroovebox->setHandleSysEx(sysExHandlerGroovebox);
+                controller.setMidiGroovebox(midiGroovebox);
             }
         }
         lastMidiProductCheck = millis();

@@ -2,10 +2,12 @@
 #define IO_CONTROLLER_AKAI_MPK_MINI_H_
 
 #include <Arduino.h>
+#include <USBHost_t36.h>
 
 #include "io_loop.h"
 #include "io_display.h"
 #include "io_controller_akai_mpk_mini_lock.h"
+#include "io_controller_akai_mpk_mini_live_synth.h"
 
 #define PAD_CHANNEL 10
 #define PAD_1 36
@@ -38,7 +40,10 @@ protected:
 
     bool modeSustainPressed = false;
 
+    // MIDIDevice_BigBuffer *midiGrouvebox = NULL;
+
     IO_ControllerAkaiMPKminiLock modeLock;
+    IO_ControllerAkaiMPKminiLiveSynth modeLiveSynth;
     // byte padPressed = 0;
 
     // IO_Loop *getLoop(byte pos) { return loops[0]; } // return loops[pos % SYNTH_COUNT]; }
@@ -58,11 +63,17 @@ protected:
     }
 
 public:
-    IO_ControllerAkaiMPKmini(IO_Display *_display, IO_Loop **_loops) : modeLock(_display)
+    IO_ControllerAkaiMPKmini(IO_Display *_display, IO_Loop **_loops) : modeLock(_display), modeLiveSynth(_display) // modeLiveSynth(_display, midiGroovebox)
     {
         display = _display;
         loops = _loops;
         // loop = getLoop(0);
+    }
+
+    void setMidiGroovebox(MIDIDevice_BigBuffer *_midi)
+    {
+        // midiGroovebox = _midi;
+        modeLiveSynth.setMidiGroovebox(_midi);
     }
 
     void noteOnHandler(byte channel, byte note, byte velocity)
@@ -82,6 +93,7 @@ public:
         case MODE_LIVE_LOOP:
             break;
         case MODE_LIVE_SYNTH:
+            modeLiveSynth.noteOnHandler(channel, note, velocity);
             break;
         case MODE_LOCK:
             modeLock.noteOnHandler(channel, note, velocity);
@@ -102,6 +114,7 @@ public:
         case MODE_LIVE_LOOP:
             break;
         case MODE_LIVE_SYNTH:
+            modeLiveSynth.noteOffHandler(channel, note, velocity);
             break;
         case MODE_LOCK:
             modeLock.noteOffHandler(channel, note, velocity);
@@ -129,6 +142,7 @@ public:
         case MODE_LIVE_LOOP:
             break;
         case MODE_LIVE_SYNTH:
+            modeLiveSynth.controlChangeHandler(channel, control, value);
             break;
         case MODE_LOCK:
             modeLock.controlChangeHandler(channel, control, value);
