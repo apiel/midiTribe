@@ -11,18 +11,14 @@ class IO_ControllerAkaiMPKminiLiveSynth
 protected:
     IO_Display *display;
     MIDIDevice_BigBuffer *midiGroovebox = NULL;
-
+    byte * currentChannel;
+    
 public:
-    IO_ControllerAkaiMPKminiLiveSynth(IO_Display *_display)
+    IO_ControllerAkaiMPKminiLiveSynth(IO_Display *_display, byte * _currentChannel)
     {
         display = _display;
+        currentChannel = _currentChannel;
     }
-
-    // IO_ControllerAkaiMPKminiLiveSynth(IO_Display *_display, MIDIDevice_BigBuffer *_midi)
-    // {
-    //     midiGroovebox = _midi;
-    //     display = _display;
-    // }
 
     void setMidiGroovebox(MIDIDevice_BigBuffer *_midi)
     {
@@ -33,7 +29,7 @@ public:
     {
         if (midiGroovebox)
         {
-            midiGroovebox->sendNoteOn(note, velocity, 1);
+            midiGroovebox->sendNoteOn(note, velocity, *currentChannel);
         }
     }
 
@@ -41,7 +37,7 @@ public:
     {
         if (midiGroovebox)
         {
-            midiGroovebox->sendNoteOff(note, velocity, 1);
+            midiGroovebox->sendNoteOff(note, velocity, *currentChannel);
         }
     }
 

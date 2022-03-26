@@ -35,12 +35,10 @@ protected:
     byte mode = MODE_LIVE_LOOP;
 
     IO_Loop **loops;
-    // IO_Loop *loop;
     IO_Display *display;
 
     bool modeSustainPressed = false;
-
-    // MIDIDevice_BigBuffer *midiGrouvebox = NULL;
+    byte currentChannel = 0;
 
     IO_ControllerAkaiMPKminiLock modeLock;
     IO_ControllerAkaiMPKminiLiveSynth modeLiveSynth;
@@ -63,16 +61,14 @@ protected:
     }
 
 public:
-    IO_ControllerAkaiMPKmini(IO_Display *_display, IO_Loop **_loops) : modeLock(_display), modeLiveSynth(_display) // modeLiveSynth(_display, midiGroovebox)
+    IO_ControllerAkaiMPKmini(IO_Display *_display, IO_Loop **_loops) : modeLock(_display), modeLiveSynth(_display, &currentChannel)
     {
         display = _display;
         loops = _loops;
-        // loop = getLoop(0);
     }
 
     void setMidiGroovebox(MIDIDevice_BigBuffer *_midi)
     {
-        // midiGroovebox = _midi;
         modeLiveSynth.setMidiGroovebox(_midi);
     }
 
@@ -83,8 +79,16 @@ public:
             if (channel == PAD_CHANNEL)
             {
                 mode = (note - PAD_1) % MODE_COUNT;
+                display->displayString("Mode", getModeName());
             }
-            display->displayString("Mode", getModeName());
+            else if (setChannelFromNote(note))
+            {
+                display->displayValue("Channel", currentChannel);
+            }
+            else
+            {
+                display->displayString("Channel", "Out of range");
+            }
             return;
         }
 
@@ -148,6 +152,62 @@ public:
             modeLock.controlChangeHandler(channel, control, value);
             break;
         }
+    }
+
+    byte setChannelFromNote(byte note)
+    {
+        switch (note)
+        {
+        case _C3:
+            currentChannel = 1;
+            return currentChannel;
+        case _D3:
+            currentChannel = 2;
+            return currentChannel;
+        case _E3:
+            currentChannel = 3;
+            return currentChannel;
+        case _F3:
+            currentChannel = 4;
+            return currentChannel;
+        case _G3:
+            currentChannel = 5;
+            return currentChannel;
+        case _A3:
+            currentChannel = 6;
+            return currentChannel;
+        case _B3:
+            currentChannel = 7;
+            return currentChannel;
+        case _C4:
+            currentChannel = 8;
+            return currentChannel;
+        case _D4:
+            currentChannel = 9;
+            return currentChannel;
+        case _E4:
+            currentChannel = 10;
+            return currentChannel;
+        case _F4:
+            currentChannel = 11;
+            return currentChannel;
+        case _G4:
+            currentChannel = 12;
+            return currentChannel;
+        case _A4:
+            currentChannel = 13;
+            return currentChannel;
+        case _B4:
+            currentChannel = 14;
+            return currentChannel;
+        case _C5:
+            currentChannel = 15;
+            return currentChannel;
+        case _D5:
+            currentChannel = 16;
+            return currentChannel;
+        }
+        return 0;
     }
 
     // void noteOnHandler(byte channel, byte note, byte velocity)
