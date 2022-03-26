@@ -14,12 +14,20 @@ IO_Loop *loopsPtr[16] = {
 
 IO_ControllerAkaiMPKmini controller(&display, loopsPtr);
 
+byte clockCount = 0;
 void clockHandler()
 {
-    for (byte i = 0; i < 16; i++)
+    if (clockCount == 0)
     {
-        loopsPtr[i]->next();
+        // clock is not right
+        for (byte i = 0; i < 16; i++)
+        {
+            loopsPtr[i]->next();
+        }
     }
+    // Clock events are sent at a rate of 24 pulses per quarter note
+    // 4 * 6 = 24
+    clockCount = (clockCount + 1) % 6;
 }
 
 #endif
