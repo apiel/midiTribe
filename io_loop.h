@@ -21,10 +21,51 @@ protected:
 
     byte nextToPlay = 0;
 
+    void activateSingleLoopMode(bool value = true)
+    {
+        modeSingleLoop = value;
+        if (modeSingleLoop)
+        {
+            previousLoopNote = nextToPlay;
+            nextToPlay = 0;
+        }
+        else
+        {
+            nextToPlay = previousLoopNote;
+        }
+    }
+
+    virtual void sendNoteOn(Step *step)
+    {
+        sendNoteOn(step, &lastStep);
+    }
+
+    void sendNoteOn(Step *step, Step *_lastStep)
+    {
+        _lastStep->set(step);
+        // Add note difference to note
+        _lastStep->note += (int)play - (int)REF_NOTE;
+        midiGroovebox->sendNoteOn(_lastStep->note, velocity, channel);
+    }
+
+    virtual void sendNoteOff()
+    {
+        sendNoteOff(&lastStep);
+    }
+
+    void sendNoteOff(Step *_lastStep)
+    {
+        if (!_lastStep->slide)
+        {
+            midiGroovebox->sendNoteOff(_lastStep->note, _lastStep->velocity, channel);
+            // To avoid repeating this again, let set slide to true
+            _lastStep->slide = true;
+        }
+    }
 
 public:
     byte channel = 1;
-    bool active = true;
+    // need to rename this
     bool modeSingleLoop = true;
     byte play = 0;
     byte previousLoopNote = 0;
@@ -55,7 +96,8 @@ public:
         nextPattern = patternSelector[currentPatternSelector] % PATTERN_COUNT;
     }
 
-    byte getCurrentPattern() {
+    byte getCurrentPattern()
+    {
         return patternSelector[currentPatternSelector];
     }
 
@@ -63,22 +105,13 @@ public:
     {
         if (midiGroovebox)
         {
-            if (!lastStep.slide)
-            {
-                midiGroovebox->sendNoteOff(lastStep.note, lastStep.velocity, channel);
-                // To avoid repeating this again, let set slide to true
-                lastStep.slide = true;
-            }
-
+            sendNoteOff();
             if (play)
             {
                 Step *step = &pattern->steps[currentStep];
                 if (step->note > 0)
                 {
-                    lastStep.set(step);
-                    // Add note difference to note
-                    lastStep.note += (int)play - (int)REF_NOTE;
-                    midiGroovebox->sendNoteOn(lastStep.note, velocity, channel);
+                    sendNoteOn(step);
                 }
             }
         }
@@ -92,17 +125,15 @@ public:
         }
     }
 
-    void noteOn(byte _channel, byte note, byte _velocity)
+    virtual void noteOn(byte _channel, byte note, byte _velocity)
     {
-        if (active)
-        {
-            channel = _channel;
-            nextVelocity = _velocity;
-            nextToPlay = note;
-        }
+        channel = _channel;
+        nextVelocity = _velocity;
+        nextToPlay = note;
+        // Serial.printf("Loop should now play %d on ch %d with velo %d\n", nextToPlay, channel, _velocity);
     }
 
-    void noteOff(byte note)
+    virtual void noteOff(byte note)
     {
         if (modeSingleLoop && note == nextToPlay)
         {
@@ -110,22 +141,11 @@ public:
         }
     }
 
-    void toggle() { activate(!active); }
-    void activate(bool value = true) { active = value; }
-
     void toggleMode() { activateSingleLoopMode(!modeSingleLoop); }
-    void activateSingleLoopMode(bool value = true)
+
+    byte getPatternAtBank(byte bankPos)
     {
-        modeSingleLoop = value;
-        if (modeSingleLoop)
-        {
-            previousLoopNote = nextToPlay;
-            nextToPlay = 0;
-        }
-        else
-        {
-            nextToPlay = previousLoopNote;
-        }
+        return patternSelector[bankPos];
     }
 };
 

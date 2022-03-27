@@ -42,5 +42,6 @@
                 // "cmd": "xxd -i ${relativeFile} > ${relativeFile}.h"
             }
         ]
-    }
+    },
+    "C_Cpp.errorSquiggles": "Enabled"
 }

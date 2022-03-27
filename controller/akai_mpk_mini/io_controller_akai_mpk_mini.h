@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include <USBHost_t36.h>
 
-#include "io_loop.h"
+#include "io_loop_poly.h"
 #include "io_display.h"
 #include "io_controller_akai_mpk_mini_lock.h"
 #include "io_controller_akai_mpk_mini_live_loop.h"
@@ -24,7 +24,7 @@ class IO_ControllerAkaiMPKmini
 protected:
     byte mode = MODE_LIVE_LOOP;
 
-    IO_Loop **loops;
+    IO_Poly_Loop **loops;
     IO_Display *display;
 
     bool modeSustainPressed = false;
@@ -49,7 +49,7 @@ protected:
     }
 
 public:
-    IO_ControllerAkaiMPKmini(IO_Display *_display, IO_Loop **_loops) : modeLock(_display),
+    IO_ControllerAkaiMPKmini(IO_Display *_display, IO_Poly_Loop **_loops) : modeLock(_display),
                                                                        modeLiveLoop(_display, _loops, &currentChannel),
                                                                        modeLiveSynth(_display, &currentChannel)
     {

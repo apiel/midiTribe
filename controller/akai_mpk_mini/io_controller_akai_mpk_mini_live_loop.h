@@ -5,14 +5,14 @@
 
 #include "io_utils.h"
 #include "io_patterns.h"
-#include "io_loop.h"
+#include "io_loop_poly.h"
 #include "io_display.h"
 #include "io_controller_akai_mpk_mini_def.h"
 
 class IO_ControllerAkaiMPKminiLiveLoop
 {
 protected:
-    IO_Loop **loops;
+    IO_Poly_Loop **loops;
     IO_Display *display;
 
     byte topPadPressed = 255; // 255 if no
@@ -23,13 +23,13 @@ protected:
 
     byte *currentChannel;
 
-    IO_Loop *getLoop() { return getLoop(*currentChannel); }
-    IO_Loop *getLoop(byte pos) { return loops[(pos - 1) % 16]; }
+    IO_Poly_Loop *getLoop() { return getLoop(*currentChannel); }
+    IO_Poly_Loop *getLoop(byte pos) { return loops[(pos - 1) % 16]; }
 
     byte minVelocity = 80;
 
 public:
-    IO_ControllerAkaiMPKminiLiveLoop(IO_Display *_display, IO_Loop **_loops, byte *_currentChannel)
+    IO_ControllerAkaiMPKminiLiveLoop(IO_Display *_display, IO_Poly_Loop **_loops, byte *_currentChannel)
     {
         display = _display;
         loops = _loops;
@@ -66,7 +66,7 @@ public:
     void setPatternSelector(byte bankPos, byte patternPos)
     {
         getLoop()->setPatternSelector(bankPos, patternPos);
-        display->displayValue("Pattern selector", getLoop()->patternSelector[bankPos]);
+        display->displayValue("Pattern selector", getLoop()->getPatternAtBank(bankPos));
     }
 
     bool isTopPadPressed()
