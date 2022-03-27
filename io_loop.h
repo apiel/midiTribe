@@ -125,7 +125,7 @@ public:
         }
     }
 
-    virtual void noteOn(byte _channel, byte note, byte _velocity)
+    void noteOn(byte _channel, byte note, byte _velocity)
     {
         channel = _channel;
         nextVelocity = _velocity;
@@ -133,7 +133,7 @@ public:
         // Serial.printf("Loop should now play %d on ch %d with velo %d\n", nextToPlay, channel, _velocity);
     }
 
-    virtual void noteOff(byte note)
+    void noteOff(byte note)
     {
         if (modeSingleLoop && note == nextToPlay)
         {

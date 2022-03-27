@@ -26,6 +26,18 @@ protected:
         return 255;
     }
 
+    bool hasNoteToPlay()
+    {
+        for (byte i = 0; i < POLY_LOOP_COUNT; i++)
+        {
+            if (playedNote[i] != 255)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     void sendNoteOn(Step *step) override
     {
         for (byte i = 0; i < POLY_LOOP_COUNT; i++)
@@ -36,7 +48,7 @@ protected:
                 // Add note difference to note
                 lastSteps[i].note += (int)playedNote[i] - (int)REF_NOTE;
                 midiGroovebox->sendNoteOn(lastSteps[i].note, velocity, channel);
-                Serial.printf("Send note in poly %d\n", lastSteps[i].note);
+                // Serial.printf("Send note in poly %d\n", lastSteps[i].note);
                 // IO_Loop::sendNoteOn(step, &lastSteps[i]);
             }
         }
@@ -57,18 +69,10 @@ protected:
     }
 
 public:
-    // IO_Poly_Loop()
-    // {
-    //     for (byte i = 0; i < POLY_LOOP_COUNT; i++)
-    //     {
-    //         playedNote[i] = 255;
-    //     }
-    // }
-
     void noteOn(byte channel, byte note, byte velocity)
     {
         byte freeSpot = getPlayedNotePos(255);
-        Serial.printf("Press note on in poly %d (%d)\n", note, freeSpot);
+        // Serial.printf("Press note on in poly %d (%d)\n", note, freeSpot);
         if (freeSpot != 255)
         {
             playedNote[freeSpot] = note;
@@ -83,7 +87,11 @@ public:
         {
             playedNote[pos] = 255;
         }
-        IO_Loop::noteOff(note);
+
+        if (modeSingleLoop && !hasNoteToPlay())
+        {
+            nextToPlay = 0;
+        }
     }
 };
 
