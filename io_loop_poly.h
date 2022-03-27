@@ -6,7 +6,8 @@
 
 #include "io_loop.h"
 
-#define POLY_LOOP_COUNT 3
+// #define POLY_LOOP_COUNT 3
+#define POLY_LOOP_COUNT 6
 
 class IO_Poly_Loop : public IO_Loop
 {
@@ -48,8 +49,6 @@ protected:
                 // Add note difference to note
                 lastSteps[i].note += (int)playedNote[i] - (int)REF_NOTE;
                 midiGroovebox->sendNoteOn(lastSteps[i].note, velocity, channel);
-                // Serial.printf("Send note in poly %d\n", lastSteps[i].note);
-                // IO_Loop::sendNoteOn(step, &lastSteps[i]);
             }
         }
     }
@@ -58,13 +57,7 @@ protected:
     {
         for (byte i = 0; i < POLY_LOOP_COUNT; i++)
         {
-            // IO_Loop::sendNoteOff(&lastSteps[i]);
-            if (!lastSteps[i].slide)
-            {
-                midiGroovebox->sendNoteOff(lastSteps[i].note, lastSteps[i].velocity, channel);
-                // To avoid repeating this again, let set slide to true
-                lastSteps[i].slide = true;
-            }
+            IO_Loop::sendNoteOff(&lastSteps[i]);
         }
     }
 
