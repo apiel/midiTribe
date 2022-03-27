@@ -12,7 +12,7 @@
 class IO_Poly_Loop : public IO_Loop
 {
 protected:
-    byte playedNote[POLY_LOOP_COUNT] = {255, 255, 255};
+    byte playedNote[POLY_LOOP_COUNT];
     Step lastSteps[POLY_LOOP_COUNT];
 
     byte getPlayedNotePos(byte note)
@@ -62,6 +62,14 @@ protected:
     }
 
 public:
+    IO_Poly_Loop()
+    {
+        for (byte i = 0; i < POLY_LOOP_COUNT; i++)
+        {
+            playedNote[i] = 255;
+        }
+    }
+    
     void noteOn(byte channel, byte note, byte velocity)
     {
         byte freeSpot = getPlayedNotePos(255);
