@@ -9,16 +9,7 @@
 #include "io_controller_akai_mpk_mini_lock.h"
 #include "io_controller_akai_mpk_mini_live_loop.h"
 #include "io_controller_akai_mpk_mini_live_synth.h"
-
-#define PAD_CHANNEL 10
-#define PAD_1 36
-#define PAD_2 37
-#define PAD_3 38
-#define PAD_4 39
-#define PAD_5 40
-#define PAD_6 41
-#define PAD_7 42
-#define PAD_8 43
+#include "io_controller_akai_mpk_mini_def.h"
 
 enum
 {
