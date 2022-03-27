@@ -46,13 +46,17 @@ public:
 
     void setPatternSelector(byte pos, byte value)
     {
-        patternSelector[pos % PATTERN_SELECTOR_COUNT] = value;
+        patternSelector[pos % PATTERN_SELECTOR_COUNT] = value % PATTERN_COUNT;
     }
 
     void setCurrentPatternSelector(byte value)
     {
         currentPatternSelector = value % PATTERN_SELECTOR_COUNT;
         nextPattern = patternSelector[currentPatternSelector] % PATTERN_COUNT;
+    }
+
+    byte getCurrentPattern() {
+        return patternSelector[currentPatternSelector];
     }
 
     void next()

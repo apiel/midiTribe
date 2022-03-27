@@ -3,6 +3,8 @@
 
 #include <Arduino.h>
 
+#define between(x, a, b)  (((a) <= (x)) && ((x) <= (b)))
+
 // bool intArrayStartWith(const uint8_t *start, const uint8_t *data, byte ignore)
 // {
 //     for (uint16_t i = 0; i < 10 && start[i] != '\0'; i++)

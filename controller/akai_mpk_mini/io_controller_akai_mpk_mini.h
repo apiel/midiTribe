@@ -22,8 +22,6 @@ enum
 class IO_ControllerAkaiMPKmini
 {
 protected:
-    // IO_Loop *loopPadPressed = NULL;
-    // bool loopPadPressedDidAction = false;
     byte mode = MODE_LIVE_LOOP;
 
     IO_Loop **loops;
@@ -35,8 +33,6 @@ protected:
     IO_ControllerAkaiMPKminiLock modeLock;
     IO_ControllerAkaiMPKminiLiveLoop modeLiveLoop;
     IO_ControllerAkaiMPKminiLiveSynth modeLiveSynth;
-
-    // byte padPressed = 0;
 
     const char *getModeName()
     {
@@ -206,181 +202,6 @@ public:
         }
         return 0;
     }
-
-    // void noteOnHandler(byte channel, byte note, byte velocity)
-    // {
-    //     if (modeSustainPressed)
-    //     {
-    //         mode = note - 48;
-    //         if (note == 72)
-    //         {
-    //             mode = MODE_LOCK;
-    //         }
-    //         display->displayString("Mode", getModeName());
-    //         return;
-    //     }
-
-    //     // if (mode == MODE_LOCK)
-    //     // {
-    //     //     display->displayString("Mode", getModeName());
-    //     //     return;
-    //     // }
-
-    //     // if (channel == PAD_CHANNEL)
-    //     // {
-    //     //     // if (note == PAD_1)
-    //     //     // {
-    //     //     //     loopPadPressed = getLoop(SYNTH_0);
-    //     //     // }
-    //     //     // else if (note == PAD_2)
-    //     //     // {
-    //     //     //     loopPadPressed = getLoop(SYNTH_1);
-    //     //     // }
-    //     //     // else if (note == PAD_3)
-    //     //     // {
-    //     //     //     loopPadPressed = getLoop(SYNTH_2);
-    //     //     // }
-    //     //     // else if (note == PAD_4)
-    //     //     // {
-    //     //     //     loopPadPressed = getLoop(SYNTH_3);
-    //     //     // }
-    //     //     // return;
-    //     // }
-
-    //     // if (mode == MODE_LIVE_LOOP)
-    //     // {
-    //     //     loop->noteOn(note);
-    //     // }
-    // }
-
-    // void loopPadPressedAction(byte id)
-    // {
-    //     if (loop->id != id)
-    //     {
-    //         // setCurrentSynth(id);
-    //         display->displayValue("Current synth", id);
-    //     }
-    //     else if (!loopPadPressedDidAction)
-    //     {
-    //         loop->toggleMode();
-    //         if (loop->modeSingleLoop)
-    //         {
-    //             display->displayString("Pattern mode", "loop");
-    //         }
-    //         else
-    //         {
-    //             display->displayString("Pattern mode", "one");
-    //         }
-    //     }
-    //     loopPadPressed = NULL;
-    //     loopPadPressedDidAction = false;
-    // }
-
-    // void noteOffHandler(byte channel, byte note, byte velocity)
-    // {
-    //     if (modeSustainPressed)
-    //     {
-    //         display->displayString("Mode", getModeName());
-    //         return;
-    //     }
-
-    //     if (mode == MODE_LOCK)
-    //     {
-    //         display->displayString("Mode", getModeName());
-    //         return;
-    //     }
-
-    //     if (channel == PAD_CHANNEL)
-    //     {
-    //         if (note == PAD_1)
-    //         {
-    //             loopPadPressedAction(0);
-    //         }
-    //         else if (note == PAD_2)
-    //         {
-    //             loopPadPressedAction(1);
-    //         }
-    //         else if (note == PAD_3)
-    //         {
-    //             loopPadPressedAction(2);
-    //         }
-    //         else if (note == PAD_4)
-    //         {
-    //             loopPadPressedAction(3);
-    //         }
-    //         else if (note == PAD_5)
-    //         {
-    //             loop->setCurrentPatternSelector(0);
-    //             display->displayValue("Pattern selector 0", loop->patternSelector[0]);
-    //         }
-    //         else if (note == PAD_6)
-    //         {
-    //             loop->setCurrentPatternSelector(1);
-    //             display->displayValue("Pattern selector 1", loop->patternSelector[1]);
-    //         }
-    //         else if (note == PAD_7)
-    //         {
-    //             loop->setCurrentPatternSelector(2);
-    //             display->displayValue("Pattern selector 2", loop->patternSelector[2]);
-    //         }
-    //         else if (note == PAD_8)
-    //         {
-    //             loop->setCurrentPatternSelector(3);
-    //             display->displayValue("Pattern selector 3", loop->patternSelector[3]);
-    //         }
-    //         return;
-    //     }
-
-    //     // // should just off all ??
-    //     // if (mode == MODE_LIVE_LOOP)
-    //     // {
-    //     //     loop->noteOff(note);
-    //     // }
-    // }
-
-    // void controlChangeHandler(byte channel, byte control, byte value)
-    // {
-    //     if (control == 64) // when pressin sustain button
-    //     {
-    //         modeSustainPressed = value == 127;
-    //         display->displayString("Mode", getModeName());
-    //         return;
-    //     }
-    //     if (mode == MODE_LOCK)
-    //     {
-    //         display->displayString("Mode", getModeName());
-    //         return;
-    //     }
-
-    //     if (loopPadPressed)
-    //     {
-    //         if (control == 17)
-    //         {
-    //             loopPadPressed->setPatternSelector(0, value);
-    //             display->displayValue("Pattern selector 0", loopPadPressed->patternSelector[0]);
-    //             loopPadPressedDidAction = true;
-    //         }
-    //         else if (control == 18)
-    //         {
-    //             loopPadPressed->setPatternSelector(1, value);
-    //             display->displayValue("Pattern selector 1", loopPadPressed->patternSelector[1]);
-    //             loopPadPressedDidAction = true;
-    //         }
-    //         else if (control == 19)
-    //         {
-    //             loopPadPressed->setPatternSelector(2, value);
-    //             display->displayValue("Pattern selector 2", loopPadPressed->patternSelector[2]);
-    //             loopPadPressedDidAction = true;
-    //         }
-    //         else if (control == 20)
-    //         {
-    //             loopPadPressed->setPatternSelector(3, value);
-    //             display->displayValue("Pattern selector 3", loopPadPressed->patternSelector[3]);
-    //             loopPadPressedDidAction = true;
-    //         }
-    //         return;
-    //     }
-    // }
 };
 
 #endif

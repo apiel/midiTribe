@@ -3,6 +3,8 @@
 
 #include <Arduino.h>
 
+#include "io_utils.h"
+#include "io_patterns.h"
 #include "io_loop.h"
 #include "io_display.h"
 #include "io_controller_akai_mpk_mini_def.h"
@@ -13,12 +15,16 @@ protected:
     IO_Loop **loops;
     IO_Display *display;
 
+    byte topPadPressed = 255; // 255 if no
+    bool topPadPressedDidAction = false;
+
     byte currentPattern = 0;
     Pattern *pattern;
 
     byte *currentChannel;
 
-    IO_Loop *getLoop() { return loops[(*currentChannel - 1) % 16]; }
+    IO_Loop *getLoop() { return getLoop(*currentChannel); }
+    IO_Loop *getLoop(byte pos) { return loops[(pos - 1) % 16]; }
 
     byte minVelocity = 80;
 
@@ -34,26 +40,38 @@ public:
     {
         if (channel == PAD_CHANNEL)
         {
-            if (note == PAD_1)
+
+            if (between(note, PAD_1, PAD_4))
             {
-                onBottomPad(1);
+                onBottomPad(note - PAD_1 + 1);
             }
-            else if (note == PAD_2)
+            else if (between(note, PAD_5, PAD_8))
             {
-                onBottomPad(2);
-            }
-            else if (note == PAD_3)
-            {
-                onBottomPad(3);
-            }
-            else if (note == PAD_4)
-            {
-                onBottomPad(4);
+                topPadPressed = note - PAD_5;
             }
             return;
         }
 
-        getLoop()->noteOn(*currentChannel, note, max(velocity, minVelocity));
+        if (isTopPadPressed())
+        {
+            setPatternSelector(topPadPressed, note);
+            topPadPressedDidAction = true;
+        }
+        else
+        {
+            getLoop()->noteOn(*currentChannel, note, max(velocity, minVelocity));
+        }
+    }
+
+    void setPatternSelector(byte bankPos, byte patternPos)
+    {
+        getLoop()->setPatternSelector(bankPos, patternPos);
+        display->displayValue("Pattern selector", getLoop()->patternSelector[bankPos]);
+    }
+
+    bool isTopPadPressed()
+    {
+        return topPadPressed != 255;
     }
 
     // bottom row pad1, pad2, pad3, pad4
@@ -81,16 +99,37 @@ public:
 
     void noteOffHandler(byte channel, byte note, byte velocity)
     {
-        getLoop()->noteOff(note);
+        if (channel == PAD_CHANNEL)
+        {
+            if (between(note, PAD_5, PAD_8))
+            {
+                if (!topPadPressedDidAction)
+                {
+                    getLoop()->setCurrentPatternSelector(note - PAD_5);
+                    display->displayValue("Select pattern", getLoop()->getCurrentPattern());
+                }
+            }
+            topPadPressed = 255;
+            topPadPressedDidAction = false;
+            return;
+        }
+        if (!isTopPadPressed())
+        {
+            getLoop()->noteOff(note);
+        }
     }
 
     void controlChangeHandler(byte channel, byte control, byte value)
     {
         // set min max velocity
-        if (control == 20)
+        if (control == 16)
         {
             minVelocity = max(value, 10);
             display->displayValue("Min velocity", minVelocity);
+        }
+        else if (between(control,17, 20))
+        {
+            setPatternSelector(control - 17, (value / 128.0f) * PATTERN_COUNT);
         }
     }
 };
