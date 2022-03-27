@@ -162,6 +162,16 @@ void midiLoop()
         }
         lastMidiProductCheck = millis();
         midiNeedToFindProduct = midiGroovebox == NULL || midiController == NULL;
+        // This might be removed if teensy could work in standalone
+        if (midiGroovebox == NULL)
+        {
+            display.displayString("Please connect", "Groovebox");
+        }
+        else if (midiController == NULL)
+        {
+            display.displayString("Please connect", "Controller");
+        }
+        display.update();
     }
 }
 
