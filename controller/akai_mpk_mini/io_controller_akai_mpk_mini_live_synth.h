@@ -29,24 +29,7 @@ public:
     {
         if (channel == PAD_CHANNEL)
         {
-            byte channelStart = floor(*currentChannel / 4) * 4;
-            if (note == PAD_1)
-            {
-                *currentChannel = channelStart + 1;
-            }
-            else if (note == PAD_2)
-            {
-                *currentChannel = channelStart + 2;
-            }
-            else if (note == PAD_3)
-            {
-                *currentChannel = channelStart + 3;
-            }
-            else if (note == PAD_4)
-            {
-                *currentChannel = channelStart + 4;
-            }
-            display->displayValue("Channel", *currentChannel);
+            onPad(note - PAD_1 + 1);
             return;
         }
 
@@ -54,6 +37,13 @@ public:
         {
             midiGroovebox->sendNoteOn(note, velocity, *currentChannel);
         }
+    }
+
+    void onPad(byte padValue)
+    {
+        byte channelStart = floor((*currentChannel - 1) / 8) * 8;
+        *currentChannel = channelStart + padValue;
+        display->displayValue("Channel", *currentChannel);
     }
 
     void noteOffHandler(byte channel, byte note, byte velocity)
