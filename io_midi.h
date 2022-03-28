@@ -126,6 +126,7 @@ void midiLoop()
             ;
     }
 
+    // TODO
     // might find a way to detect disconnect
     // in /home/alex/dev/arduino/arduino-1.8.19/hardware/teensy/avr/libraries/USBHost_t36/USBHost_t36.h
     // enable debug with #define USBHOST_PRINT_DEBUG true

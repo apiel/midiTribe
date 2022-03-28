@@ -36,12 +36,11 @@ public:
         currentChannel = _currentChannel;
     }
 
-/**
- * Maybe to complicated?
- * Pad might still do like synth, the 8 pads are for channel selection
- * if press again change mode from loop to single
- * if press and in the same time press note then select pattern
- */
+// NOTE
+// Maybe to complicated?
+// Pad might still do like synth, the 8 pads are for channel selection
+// if press again change mode from loop to single
+// if press and in the same time press note then select pattern
 
     void noteOnHandler(byte channel, byte note, byte velocity)
     {
