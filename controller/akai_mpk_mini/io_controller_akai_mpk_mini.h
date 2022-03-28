@@ -9,6 +9,7 @@
 #include "io_controller_akai_mpk_mini_lock.h"
 #include "io_controller_akai_mpk_mini_live_loop.h"
 #include "io_controller_akai_mpk_mini_live_synth.h"
+#include "io_controller_akai_mpk_mini_pattern_editor.h"
 #include "io_controller_akai_mpk_mini_def.h"
 
 enum
@@ -16,6 +17,7 @@ enum
     MODE_LOCK,
     MODE_LIVE_LOOP,
     MODE_LIVE_SYNTH,
+    MODE_PATTERN_EDITOR,
     MODE_COUNT
 };
 
@@ -33,6 +35,7 @@ protected:
     IO_ControllerAkaiMPKminiLock modeLock;
     IO_ControllerAkaiMPKminiLiveLoop modeLiveLoop;
     IO_ControllerAkaiMPKminiLiveSynth modeLiveSynth;
+    IO_ControllerAkaiMPKminiPatternEditor modePattermEditor;
 
     const char *getModeName()
     {
@@ -44,14 +47,17 @@ protected:
             return "Live Synth";
         case MODE_LOCK:
             return "Locked";
+        case MODE_PATTERN_EDITOR:
+            return "Pattern Editor";
         }
         return "Unknown";
     }
 
 public:
     IO_ControllerAkaiMPKmini(IO_Display *_display, IO_Poly_Loop **_loops) : modeLock(_display),
-                                                                       modeLiveLoop(_display, _loops, &currentChannel),
-                                                                       modeLiveSynth(_display, &currentChannel)
+                                                                            modeLiveLoop(_display, _loops, &currentChannel),
+                                                                            modeLiveSynth(_display, &currentChannel),
+                                                                            modePattermEditor(_display)
     {
         display = _display;
         loops = _loops;
@@ -93,6 +99,9 @@ public:
         case MODE_LOCK:
             modeLock.noteOnHandler(channel, note, velocity);
             break;
+        case MODE_PATTERN_EDITOR:
+            modePattermEditor.noteOnHandler(channel, note, velocity);
+            break;
         }
     }
 
@@ -114,6 +123,9 @@ public:
             break;
         case MODE_LOCK:
             modeLock.noteOffHandler(channel, note, velocity);
+            break;
+        case MODE_PATTERN_EDITOR:
+            modePattermEditor.noteOffHandler(channel, note, velocity);
             break;
         }
     }
@@ -143,6 +155,9 @@ public:
             break;
         case MODE_LOCK:
             modeLock.controlChangeHandler(channel, control, value);
+            break;
+        case MODE_PATTERN_EDITOR:
+            modePattermEditor.controlChangeHandler(channel, control, value);
             break;
         }
     }

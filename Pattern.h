@@ -3,7 +3,7 @@
 
 #include "./Step.h"
 
-#define MAX_STEPS_IN_PATTERN 32
+#define MAX_STEPS_IN_PATTERN 64
 #define PATTERN_NAME_SIZE 15
 #define SLIDE 1
 #define END 1
