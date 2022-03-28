@@ -36,6 +36,11 @@ public:
         currentChannel = _currentChannel;
     }
 
+    void render()
+    {
+        display->setDefaultName("Live Loop", 0);
+    }
+
 // NOTE
 // Maybe to complicated?
 // Pad might still do like synth, the 8 pads are for channel selection
@@ -89,11 +94,11 @@ public:
             getLoop()->toggleMode();
             if (getLoop()->modeSingleLoop)
             {
-                display->displayString("Pattern mode", "Pressed");
+                display->displayValue("Pattern mode", "Pressed");
             }
             else
             {
-                display->displayString("Pattern mode", "Loop");
+                display->displayValue("Pattern mode", "Loop");
             }
         }
         else

@@ -16,19 +16,24 @@ public:
         display = _display;
     }
 
+    void render()
+    {
+        display->setDefaultName("Keyboard locked", 0);
+    }
+
     void noteOnHandler(byte channel, byte note, byte velocity)
     {
-        display->displayString("Keyboard", "Locked");
+        display->displayValue("Keyboard", "Locked");
     }
 
     void noteOffHandler(byte channel, byte note, byte velocity)
     {
-        display->displayString("Keyboard", "Locked");
+        display->displayValue("Keyboard", "Locked");
     }
 
     void controlChangeHandler(byte channel, byte control, byte value)
     {
-        display->displayString("Keyboard", "Locked");
+        display->displayValue("Keyboard", "Locked");
     }
 };
 

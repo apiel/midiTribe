@@ -20,6 +20,11 @@ public:
         currentChannel = _currentChannel;
     }
 
+    void render()
+    {
+        display->setDefaultName("Live Synth", 0);
+    }
+
     void setMidiGroovebox(MIDIDevice_BigBuffer *_midi)
     {
         midiGroovebox = _midi;

@@ -42,12 +42,16 @@ protected:
         switch (mode)
         {
         case MODE_LIVE_LOOP:
+            modeLiveLoop.render();
             return "Live Loop";
         case MODE_LIVE_SYNTH:
+            modeLiveSynth.render();
             return "Live Synth";
         case MODE_LOCK:
+            modeLock.render();
             return "Locked";
         case MODE_PATTERN_EDITOR:
+            modePattermEditor.render();
             return "Pattern Editor";
         }
         return "Unknown";
@@ -75,7 +79,7 @@ public:
             if (channel == PAD_CHANNEL)
             {
                 mode = (note - PAD_1) % MODE_COUNT;
-                display->displayString("Mode", getModeName());
+                display->displayValue("Mode", getModeName());
             }
             else if (setChannelFromNote(note))
             {
@@ -83,7 +87,7 @@ public:
             }
             else
             {
-                display->displayString("Channel", "Out of range");
+                display->displayValue("Channel", "Out of range");
             }
             return;
         }
@@ -109,7 +113,7 @@ public:
     {
         if (modeSustainPressed)
         {
-            display->displayString("Mode", getModeName());
+            display->displayValue("Mode", getModeName());
             return;
         }
 
@@ -135,13 +139,13 @@ public:
         if (control == 64) // when pressin sustain button
         {
             modeSustainPressed = value == 127;
-            display->displayString("Mode", getModeName());
+            display->displayValue("Mode", getModeName());
             return;
         }
 
         if (modeSustainPressed)
         {
-            display->displayString("Mode", getModeName());
+            display->displayValue("Mode", getModeName());
             return;
         }
 

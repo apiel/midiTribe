@@ -23,23 +23,31 @@ protected:
     bool needDisplayUpdate = false;
     unsigned int forceRefreshIn = 0;
 
+    const char *displayName = NULL;
+    const char *stringVal = NULL;
     unsigned int displayVal = 0;
-    const char *displayValName = NULL;
     const char *displayValUnit = NULL;
 
-    const char *stringVal = NULL;
-    const char *stringName = NULL;
+    const char *defaultName = "midiTribe\n";
+    byte defaultValSize = 0;
+    const char *defaultStringVal = NULL;
+    unsigned int defaultVal = 23;
 
-    void render(unsigned int *forceRefreshIn)
+    void render()
     {
         d.clearDisplay();
         d.setCursor(0, 0);
 
-        if (displayValName)
+        if (displayName)
         {
-            d.println(displayValName);
+            d.println(displayName);
             d.println("");
-            if (displayValUnit)
+            if (stringVal)
+            {
+                d.setTextSize(strlen(stringVal) > 5 ? 2 : 3);
+                d.println(stringVal);
+            }
+            else if (displayValUnit)
             {
                 d.setTextSize(3);
                 d.print(displayVal);
@@ -52,23 +60,26 @@ protected:
             }
             d.setTextSize(1);
 
-            displayValName = NULL;
+            displayName = NULL;
             displayValUnit = NULL;
-            *forceRefreshIn = 2000;
-        }
-        else if (stringName)
-        {
-            d.println(stringName);
-            d.println("");
-            d.setTextSize(strlen(stringVal) > 5 ? 2 : 3);
-            d.println(stringVal);
-            d.setTextSize(1);
-            stringName = NULL;
-            *forceRefreshIn = 2000;
+            stringVal = NULL;
         }
         else
         {
-            d.println("Just play...");
+            d.print(defaultName);
+            if (defaultValSize)
+            {
+                d.setTextSize(defaultValSize);
+                if (defaultStringVal)
+                {
+                    d.print(defaultStringVal);
+                }
+                else
+                {
+                    d.print(defaultVal);
+                }
+                d.setTextSize(1);
+            }
         }
     }
 
@@ -99,7 +110,7 @@ public:
         {
             needDisplayUpdate = false;
             lastDisplayUpdate = millis();
-            render(&forceRefreshIn);
+            render();
             d.display();
         }
         else
@@ -121,22 +132,41 @@ public:
         }
     }
 
-    void displayValue(const char *name, unsigned int value)
-    {
-        displayVal = value;
-        displayValName = name;
-    }
-
-    void displayUnit(const char *name, unsigned int value, const char *unit)
-    {
-        displayValUnit = unit;
-        displayValue(name, value);
-    }
-
-    void displayString(const char *name, const char *value)
+    void displayValue(const char *name, const char *value, byte refresh = 20)
     {
         stringVal = value;
-        stringName = name;
+        displayName = name;
+        forceRefreshIn = refresh * 100;
+    }
+
+    void displayValue(const char *name, unsigned int value, byte refresh = 20)
+    {
+        displayVal = value;
+        displayName = name;
+        forceRefreshIn = refresh * 100;
+    }
+
+    void displayUnit(const char *name, unsigned int value, const char *unit, byte refresh = 20)
+    {
+        displayValUnit = unit;
+        displayValue(name, value, refresh);
+    }
+
+    void setDefaultValue(const char *value, byte size = 1)
+    {
+        defaultStringVal = value;
+        defaultValSize = size;
+    }
+
+    void setDefaultValue(unsigned int value, byte size = 1)
+    {
+        defaultVal = value;
+        defaultValSize = size;
+    }
+
+    void setDefaultName(const char *name, byte size = 1) {
+        defaultName = name;
+        defaultValSize = size;
     }
 };
 

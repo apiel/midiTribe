@@ -13,7 +13,6 @@ typedef byte Pat[MAX_STEPS_IN_PATTERN][2];
 class Pattern
 {
 public:
-    byte pos;
     byte stepCount = MAX_STEPS_IN_PATTERN;
     Step steps[MAX_STEPS_IN_PATTERN];
 

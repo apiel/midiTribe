@@ -166,11 +166,11 @@ void midiLoop()
         // This might be removed if teensy could work in standalone
         if (midiGroovebox == NULL)
         {
-            display.displayString("Please connect", "Groovebox");
+            display.displayValue("Please connect", "Groovebox");
         }
         else if (midiController == NULL)
         {
-            display.displayString("Please connect", "Controller");
+            display.displayValue("Please connect", "Controller");
         }
         display.update();
     }
