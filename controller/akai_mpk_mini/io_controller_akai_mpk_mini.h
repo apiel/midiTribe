@@ -5,6 +5,7 @@
 #include <USBHost_t36.h>
 
 #include "io_loop_poly.h"
+#include "io_pattern_editor.h"
 #include "io_display.h"
 #include "io_controller_akai_mpk_mini_lock.h"
 #include "io_controller_akai_mpk_mini_live_loop.h"
@@ -26,7 +27,6 @@ class IO_ControllerAkaiMPKmini
 protected:
     byte mode = MODE_LIVE_LOOP;
 
-    IO_Poly_Loop **loops;
     IO_Display *display;
 
     bool modeSustainPressed = false;
@@ -58,13 +58,12 @@ protected:
     }
 
 public:
-    IO_ControllerAkaiMPKmini(IO_Display *_display, IO_Poly_Loop **_loops) : modeLock(_display),
+    IO_ControllerAkaiMPKmini(IO_Display *_display, IO_Poly_Loop **_loops, IO_PatternEditor *_editor) : modeLock(_display),
                                                                             modeLiveLoop(_display, _loops, &currentChannel),
                                                                             modeLiveSynth(_display, &currentChannel),
-                                                                            modePattermEditor(_display)
+                                                                            modePattermEditor(_display, _editor)
     {
         display = _display;
-        loops = _loops;
     }
 
     void setMidiGroovebox(MIDIDevice_BigBuffer *_midi)

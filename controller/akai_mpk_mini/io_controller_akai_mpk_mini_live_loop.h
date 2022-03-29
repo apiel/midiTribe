@@ -26,7 +26,7 @@ protected:
     IO_Poly_Loop *getLoop() { return getLoop(*currentChannel); }
     IO_Poly_Loop *getLoop(byte pos) { return loops[(pos - 1) % 16]; }
 
-    byte minVelocity = 80;
+    byte minVelocity = 100;
 
 public:
     IO_ControllerAkaiMPKminiLiveLoop(IO_Display *_display, IO_Poly_Loop **_loops, byte *_currentChannel)

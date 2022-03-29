@@ -12,7 +12,9 @@ IO_Poly_Loop *loopsPtr[16] = {
     &loop0, &loop1, &loop2, &loop3, &loop4, &loop5, &loop6, &loop7,
     &loop8, &loop9, &loop10, &loop11, &loop12, &loop13, &loop14, &loop15};
 
-IO_ControllerAkaiMPKmini controller(&display, loopsPtr);
+IO_PatternEditor editor;
+
+IO_ControllerAkaiMPKmini controller(&display, loopsPtr, &editor);
 
 byte clockCount = 0;
 void clockHandler()

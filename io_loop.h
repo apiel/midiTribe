@@ -37,7 +37,10 @@ protected:
 
     virtual void sendNoteOn(Step *step)
     {
-        sendNoteOn(step, &lastStep);
+        if (play)
+        {
+            sendNoteOn(step, &lastStep);
+        }
     }
 
     void sendNoteOn(Step *step, Step *_lastStep)
@@ -61,6 +64,11 @@ protected:
             // To avoid repeating this again, let set slide to true
             _lastStep->slide = true;
         }
+    }
+
+    virtual void setNextToPlay()
+    {
+        play = nextToPlay ? nextToPlay : 0;
     }
 
 public:
@@ -106,13 +114,11 @@ public:
         if (midiGroovebox)
         {
             sendNoteOff();
-            if (play)
+
+            Step *step = &pattern->steps[currentStep];
+            if (step->note > 0)
             {
-                Step *step = &pattern->steps[currentStep];
-                if (step->note > 0)
-                {
-                    sendNoteOn(step);
-                }
+                sendNoteOn(step);
             }
         }
         currentStep = (currentStep + 1) % pattern->stepCount;
@@ -120,7 +126,8 @@ public:
         if (currentStep == 0)
         {
             pattern = &patterns[nextPattern];
-            play = nextToPlay ? nextToPlay : 0;
+            // play = nextToPlay ? nextToPlay : 0;
+            setNextToPlay();
             velocity = nextVelocity;
         }
     }

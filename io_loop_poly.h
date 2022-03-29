@@ -13,30 +13,20 @@ class IO_Poly_Loop : public IO_Loop
 {
 protected:
     byte playedNote[POLY_LOOP_COUNT];
+    byte nextNotes[POLY_LOOP_COUNT];
+    byte previousLoopNotes[POLY_LOOP_COUNT];
     Step lastSteps[POLY_LOOP_COUNT];
 
-    byte getPlayedNotePos(byte note)
+    byte getFreeNoteSpot(byte note)
     {
         for (byte i = 0; i < POLY_LOOP_COUNT; i++)
         {
-            if (playedNote[i] == note)
+            if (nextNotes[i] == note)
             {
                 return i;
             }
         }
         return 255;
-    }
-
-    bool hasNoteToPlay()
-    {
-        for (byte i = 0; i < POLY_LOOP_COUNT; i++)
-        {
-            if (playedNote[i] != 255)
-            {
-                return true;
-            }
-        }
-        return false;
     }
 
     void sendNoteOn(Step *step) override
@@ -61,37 +51,76 @@ protected:
         }
     }
 
+    void setNextToPlay() override
+    {
+        for (byte i = 0; i < POLY_LOOP_COUNT; i++)
+        {
+            playedNote[i] = nextNotes[i];
+        }
+    }
+
+    bool stopNote(byte note)
+    {
+        byte pos = getFreeNoteSpot(note);
+        if (pos != 255)
+        {
+            nextNotes[pos] = 255;
+            return true;
+        }
+        return false;
+    }
+
 public:
     IO_Poly_Loop()
     {
         for (byte i = 0; i < POLY_LOOP_COUNT; i++)
         {
             playedNote[i] = 255;
+            nextNotes[i] = 255;
+            previousLoopNotes[i] = 255;
         }
     }
-    
+
     void noteOn(byte channel, byte note, byte velocity)
     {
-        byte freeSpot = getPlayedNotePos(255);
+        if (!modeSingleLoop && stopNote(note))
+        {
+            return;
+        }
+        byte freeSpot = getFreeNoteSpot(255);
         // Serial.printf("Press note on in poly %d (%d)\n", note, freeSpot);
         if (freeSpot != 255)
         {
-            playedNote[freeSpot] = note;
+            nextNotes[freeSpot] = note;
         }
         IO_Loop::noteOn(channel, note, velocity);
     }
 
     void noteOff(byte note)
     {
-        byte pos = getPlayedNotePos(note);
-        if (pos != 255)
+        if (modeSingleLoop)
         {
-            playedNote[pos] = 255;
+            stopNote(note);
         }
+    }
 
-        if (modeSingleLoop && !hasNoteToPlay())
+    void toggleMode()
+    {
+        modeSingleLoop = !modeSingleLoop;
+        if (modeSingleLoop)
         {
-            nextToPlay = 0;
+            for (byte i = 0; i < POLY_LOOP_COUNT; i++)
+            {
+                previousLoopNotes[i] = nextNotes[i];
+                nextNotes[i] = 255;
+            }
+        }
+        else
+        {
+            for (byte i = 0; i < POLY_LOOP_COUNT; i++)
+            {
+                nextNotes[i] = previousLoopNotes[i];
+            }
         }
     }
 };
