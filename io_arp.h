@@ -66,9 +66,79 @@ protected:
                 lastFound = found;
                 if (found == NOTE_END)
                 {
-                    return;
+                    break;
                 }
             }
+            return;
+        }
+        if (arpMode == ARP_DOWN)
+        {
+            byte p = 0;
+            byte lastFound = 255;
+            for (; p < ARP_PATTERN_LEN; p++)
+            {
+                byte found = 0;
+                for (byte i = 0; i < ARP_NOTES_COUNT; i++)
+                {
+                    if (notes[i] != NOTE_END && notes[i] < lastFound && notes[i] > found)
+                    {
+                        found = notes[i];
+                    }
+                }
+                pattern[p] = found;
+                lastFound = found;
+                if (found == 0)
+                {
+                    pattern[p] = NOTE_END;
+                    break;
+                }
+            }
+            return;
+        }
+        if (arpMode == ARP_UP_DOWN)
+        {
+            byte p = 0;
+            byte lastFound = 0;
+            bool up = true;
+            for (; p < ARP_PATTERN_LEN; p++)
+            {
+                byte found = NOTE_END;
+                if (up)
+                {
+                    for (byte i = 0; i < ARP_NOTES_COUNT; i++)
+                    {
+                        // not necessary to do `notes[i] != NOTE_END &&` as long NOTE_END = 255
+                        if (notes[i] > lastFound && notes[i] < found)
+                        {
+                            found = notes[i];
+                        }
+                    }
+                    pattern[p] = found;
+                    lastFound = found;
+                    if (found == NOTE_END)
+                    {
+                        up = false;
+                    }
+                }
+                else
+                {
+                    for (byte i = 0; i < ARP_NOTES_COUNT; i++)
+                    {
+                        if (notes[i] != NOTE_END && notes[i] < lastFound && notes[i] > found)
+                        {
+                            found = notes[i];
+                        }
+                    }
+                    pattern[p] = found;
+                    lastFound = found;
+                    if (found == 0 || pattern[p] == pattern[0])
+                    {
+                        pattern[p] = NOTE_END;
+                        break;
+                    }
+                }
+            }
+            return;
         }
     }
 
