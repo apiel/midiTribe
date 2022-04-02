@@ -126,9 +126,37 @@ public:
         }
     }
 
-    void save()
+    bool save()
     {
-        // TODO save on SD
+        if (sdAvailable)
+        {
+            char filePath[14];
+            snprintf(filePath, 14, "patterns/%03d.pat", patternPos);
+            File file = SD.open(filePath, FILE_WRITE);
+
+            if (file)
+            {
+                file.seek(0);
+                for (byte pos = 0; pos < pattern->stepCount; pos++)
+                {
+                    if (pos > 0)
+                    {
+                        file.print(' ');
+                    }
+
+                    Step *step = getStep();
+                    file.print(getNoteStr(step->note));
+                    file.print('0' + getNoteOctave(step->note));
+                    if (step->slide)
+                    {
+                        file.print('_');
+                    }
+                }
+                file.close();
+                return true;
+            }
+        }
+        return false;
     }
 };
 
