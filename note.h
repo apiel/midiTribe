@@ -127,6 +127,13 @@ const char* getNoteStr(byte initialNote) {
     byte idx = (initialNote % 12);
     return noteNames[idx];
 }
+const char* getNote2Str(byte initialNote) {
+    const char* noteNames[] = {" C",  "C#", " D",  "D#", " E",  " F",
+                               "F#", " G",  "G#", " A",  "A#", " B"};
+
+    byte idx = (initialNote % 12);
+    return noteNames[idx];
+}
 const char* getNoteDot(byte initialNote) {
     const char* noteNames[] = {"C",  "C.", "D",  "D.", "E",  "F",
                                "F.", "G",  "G.", "A",  "A.", "B"};

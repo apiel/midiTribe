@@ -42,6 +42,11 @@ public:
         return &pattern->steps[stepPos];
     }
 
+    Step *getStep(byte pos)
+    {
+        return &pattern->steps[(stepPos + pos) % pattern->stepCount];
+    }
+
     void load()
     {
         sdAvailable = SD.begin(BUILTIN_SDCARD);

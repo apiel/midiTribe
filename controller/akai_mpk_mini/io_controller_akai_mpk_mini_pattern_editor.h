@@ -16,7 +16,25 @@ protected:
     IO_PatternEditor *editor;
 
     char val[10];
-    char val2[7];
+    char name[70];
+
+    void addNoteToName(byte pos)
+    {
+        if (editor->getStep(pos)->note == 0)
+        {
+            snprintf(name, 70, "%s--- ", name);
+        }
+        else
+        {
+            snprintf(name, 70, "%s%s%d ", name, getNote2Str(editor->getStep(pos)->note), getNoteOctave(editor->getStep(pos)->note));
+        }
+    }
+
+    byte mod(int8_t a, byte b)
+    {
+        int8_t c = a % b;
+        return (c < 0) ? c + b : c;
+    }
 
 public:
     IO_ControllerAkaiMPKminiPatternEditor(IO_Display *_display, IO_PatternEditor *_editor)
@@ -27,16 +45,28 @@ public:
 
     void render()
     {
-        display->setDefaultName("Pattern Editor\n\n\n\nStep      Note\n\n ");
+        snprintf(name, 70, "Pattern Editor\n\n");
+        addNoteToName(-2);
+        addNoteToName(-1);
+        addNoteToName(0);
+        addNoteToName(1);
+        addNoteToName(2);
+        snprintf(name, 70, "%s\n\n %02d  %02d  %02d  %02d  %02d\n\n", name,
+                 mod(editor->stepPos - 2, 4) + 1, mod(editor->stepPos - 1, 4) + 1,
+                 editor->stepPos + 1,
+                 mod(editor->stepPos + 1, 4) + 1, mod(editor->stepPos + 2, 4) + 1);
+
+        display->setDefaultName(name);
+
         if (editor->getStep()->note == 0)
         {
-            snprintf(val, 10, "%02d   --", editor->stepPos + 1);
+            display->setDefaultValue("    --", 2);
         }
         else
         {
-            snprintf(val, 10, "%02d   %s%d", editor->stepPos + 1, getNoteStr(editor->getStep()->note), getNoteOctave(editor->getStep()->note));
+            snprintf(val, 10, "    %s%d", getNoteStr(editor->getStep()->note), getNoteOctave(editor->getStep()->note));
+            display->setDefaultValue(val, 2);
         }
-        display->setDefaultValue(val, 2);
     }
 
     // TODO play midi note in the same time
@@ -44,7 +74,8 @@ public:
     // TODO use pad as well to increment from one empty step
     void noteOnHandler(byte channel, byte note, byte velocity)
     {
-        if (channel == PAD_CHANNEL) {
+        if (channel == PAD_CHANNEL)
+        {
             // TODO use pad to set slid on current and previous step
             // TODO set empty step
             return;
@@ -52,8 +83,6 @@ public:
         editor->getStep()->note = note;
         editor->stepPos = (editor->stepPos + 1) % editor->pattern->stepCount;
         render();
-        snprintf(val2, 7, "%s%d", getNoteStr(note), getNoteOctave(note));
-        display->displayValue("Set note", val2);
     }
 
     void noteOffHandler(byte channel, byte note, byte velocity)
