@@ -25,7 +25,7 @@ enum
 class IO_ControllerAkaiMPKmini
 {
 protected:
-    byte mode = MODE_LIVE_LOOP;
+    byte mode = MODE_LOCK;
 
     IO_Display *display;
 
@@ -48,7 +48,7 @@ protected:
             modeLiveSynth.render();
             return "Live Synth";
         case MODE_LOCK:
-            modeLock.render();
+            modeLock.render(); // WTF is this??
             return "Locked";
         case MODE_PATTERN_EDITOR:
             modePattermEditor.render();
@@ -69,6 +69,7 @@ public:
     void setMidiGroovebox(MIDIDevice_BigBuffer *_midi)
     {
         modeLiveSynth.setMidiGroovebox(_midi);
+        modeLock.setMidiGroovebox(_midi);
     }
 
     void noteOnHandler(byte channel, byte note, byte velocity)

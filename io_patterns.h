@@ -2,6 +2,7 @@
 #define IO_PATTERNS_H_
 
 #include "Pattern.h"
+#include "note.h"
 
 #define PATTERN_COUNT 25
 

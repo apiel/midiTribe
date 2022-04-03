@@ -8,13 +8,13 @@
 #include "io_core.h"
 #include "io_utils.h"
 
-#define MIDI_COUNT 3
+#define MIDI_USB_COUNT 3
 
 USBHost myusb;
 USBHub hub1(myusb);
 USBHub hub2(myusb);
 USBHub hub3(myusb);
-MIDIDevice_BigBuffer midi[MIDI_COUNT] = MIDIDevice_BigBuffer(myusb);
+MIDIDevice_BigBuffer midi[MIDI_USB_COUNT] = MIDIDevice_BigBuffer(myusb);
 
 MIDIDevice_BigBuffer *midiController = NULL;
 MIDIDevice_BigBuffer *midiGroovebox = NULL;
@@ -120,10 +120,34 @@ unsigned long lastMidiProductCheck = millis();
 void midiLoop()
 {
     myusb.Task();
-    for (byte n = 0; n < MIDI_COUNT; n++)
+    for (byte n = 0; n < MIDI_USB_COUNT; n++)
     {
         while (midi[n].read())
             ;
+    }
+
+    // To use with arduino IDE, usb type: Serial + Midi
+    if (usbMIDI.read())
+    {
+        byte type = usbMIDI.getType();       // which MIDI message, 128-255
+        byte channel = usbMIDI.getChannel(); // which MIDI channel, 1-16
+        byte data1 = usbMIDI.getData1();     // first data byte of message, 0-127
+        byte data2 = usbMIDI.getData2();     // second data byte of message, 0-127
+
+        switch (type)
+        {
+        case usbMIDI.NoteOff: // 0x80
+            noteOnController(channel, data1, data2);
+            break;
+
+        case usbMIDI.NoteOn: // 0x90
+            noteOffController(channel, data1, data2);
+            break;
+
+        case usbMIDI.ControlChange: // 0xB0
+            controlChangeController(channel, data1, data2);
+            break;
+        }
     }
 
     // TODO
@@ -132,7 +156,7 @@ void midiLoop()
     // enable debug with #define USBHOST_PRINT_DEBUG true
     if (midiNeedToFindProduct && millis() - lastMidiProductCheck >= 1000) // check every seconds
     {
-        for (byte n = 0; n < MIDI_COUNT; n++)
+        for (byte n = 0; n < MIDI_USB_COUNT; n++)
         {
             Serial.printf("\nVendor %d: %i %s %i %s", n, midi[n].idVendor(), midi[n].manufacturer(), midi[n].idProduct(), midi[n].product());
 
@@ -163,16 +187,16 @@ void midiLoop()
         }
         lastMidiProductCheck = millis();
         midiNeedToFindProduct = midiGroovebox == NULL || midiController == NULL;
-        // This might be removed if teensy could work in standalone
-        if (midiGroovebox == NULL)
-        {
-            display.displayValue("Please connect", "Groovebox");
-        }
-        else if (midiController == NULL)
-        {
-            display.displayValue("Please connect", "Controller");
-        }
-        display.update();
+        // // This might be removed if teensy could work in standalone
+        // if (midiGroovebox == NULL)
+        // {
+        //     display.displayValue("Please connect", "Groovebox");
+        // }
+        // else if (midiController == NULL)
+        // {
+        //     display.displayValue("Please connect", "Controller");
+        // }
+        // display.update();
     }
 }
 

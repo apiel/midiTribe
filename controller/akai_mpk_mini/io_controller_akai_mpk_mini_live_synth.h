@@ -41,6 +41,8 @@ public:
         if (midiGroovebox)
         {
             midiGroovebox->sendNoteOn(note, velocity, *currentChannel);
+        } else {
+            display->displayValue("Please connect", "Groovebox");
         }
     }
 
@@ -56,6 +58,8 @@ public:
         if (midiGroovebox)
         {
             midiGroovebox->sendNoteOff(note, velocity, *currentChannel);
+        } else {
+            display->displayValue("Please connect", "Groovebox");
         }
     }
 

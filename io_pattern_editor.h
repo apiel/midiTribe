@@ -13,10 +13,6 @@ class IO_PatternEditor
 protected:
     bool sdAvailable = false;
 
-    // NOTE
-    // should there be a way to load pattern from phone
-    // and to save as well?
-
     // TODO
     // load pattern from electribe using sysex
 

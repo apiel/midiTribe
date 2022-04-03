@@ -2,6 +2,7 @@
 #define IO_CONTROLLER_AKAI_MPK_MINI_LOCK_H_
 
 #include <Arduino.h>
+#include <USBHost_t36.h>
 
 #include "io_display.h"
 
@@ -9,6 +10,7 @@ class IO_ControllerAkaiMPKminiLock
 {
 protected:
     IO_Display *display;
+    MIDIDevice_BigBuffer *midiGroovebox = NULL;
 
 public:
     IO_ControllerAkaiMPKminiLock(IO_Display *_display)
@@ -16,9 +18,26 @@ public:
         display = _display;
     }
 
+    void setMidiGroovebox(MIDIDevice_BigBuffer *_midi)
+    {
+        midiGroovebox = _midi;
+    }
+
     void render()
     {
         display->setDefaultName("Keyboard locked", 0);
+
+        // char val[100];
+        // snprintf(val, 100, "Groove", getNoteStr(note), getNoteOctave(note));
+        // display->displayValue("Set note", val2);
+        if (midiGroovebox)
+        {
+            display->setDefaultValue("Groovebox connected");
+        }
+        else
+        {
+            display->setDefaultValue("Groovebox disconnected");
+        }
     }
 
     void noteOnHandler(byte channel, byte note, byte velocity)
