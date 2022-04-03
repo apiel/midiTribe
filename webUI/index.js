@@ -63,3 +63,15 @@ document.querySelectorAll('#pad button, #keyboard button').forEach((bt) => {
     bt.onmouseup = () =>
         getOutput().send([127 + Number(channel), Number(note), 100]);
 });
+
+document.querySelectorAll('#mode button').forEach((bt) => {
+    const { note } = bt.dataset;
+
+    // 0xB0 = 176 note on ch1
+    bt.onclick = () => {
+        getOutput().send([0xb0, 64, 127]);
+        // 0x90 = 144 note on ch1 + 9 for ch10
+        getOutput().send([153, Number(note), 100]);
+        getOutput().send([0xb0, 64, 0]);
+    };
+});

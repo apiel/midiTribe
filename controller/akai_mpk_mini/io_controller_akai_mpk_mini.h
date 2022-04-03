@@ -41,17 +41,13 @@ protected:
     {
         switch (mode)
         {
+        case MODE_LOCK:
+            return "Locked";
         case MODE_LIVE_LOOP:
-            modeLiveLoop.render();
             return "Live Loop";
         case MODE_LIVE_SYNTH:
-            modeLiveSynth.render();
             return "Live Synth";
-        case MODE_LOCK:
-            modeLock.render(); // WTF is this??
-            return "Locked";
         case MODE_PATTERN_EDITOR:
-            modePattermEditor.render();
             return "Pattern Editor";
         }
         return "Unknown";
@@ -59,11 +55,12 @@ protected:
 
 public:
     IO_ControllerAkaiMPKmini(IO_Display *_display, IO_Poly_Loop **_loops, IO_PatternEditor *_editor) : modeLock(_display),
-                                                                            modeLiveLoop(_display, _loops, &currentChannel),
-                                                                            modeLiveSynth(_display, &currentChannel),
-                                                                            modePattermEditor(_display, _editor)
+                                                                                                       modeLiveLoop(_display, _loops, &currentChannel),
+                                                                                                       modeLiveSynth(_display, &currentChannel),
+                                                                                                       modePattermEditor(_display, _editor)
     {
         display = _display;
+        setMode(mode);
     }
 
     void setMidiGroovebox(MIDIDevice_BigBuffer *_midi)
@@ -72,14 +69,41 @@ public:
         modeLock.setMidiGroovebox(_midi);
     }
 
+    void setMidiController(MIDIDevice_BigBuffer *_midi)
+    {
+        modeLock.setMidiController(_midi);
+    }
+
+    void setMode(byte pos)
+    {
+        mode = pos % MODE_COUNT;
+        display->displayValue("Mode", getModeName());
+        // Serial.println("Set mode");
+
+        switch (mode)
+        {
+        case MODE_LIVE_LOOP:
+            modeLiveLoop.render();
+            break;
+        case MODE_LIVE_SYNTH:
+            modeLiveSynth.render();
+            break;
+        case MODE_LOCK:
+            modeLock.render();
+            break;
+        case MODE_PATTERN_EDITOR:
+            modePattermEditor.render();
+            break;
+        }
+    }
+
     void noteOnHandler(byte channel, byte note, byte velocity)
     {
         if (modeSustainPressed)
         {
             if (channel == PAD_CHANNEL)
             {
-                mode = (note - PAD_1) % MODE_COUNT;
-                display->displayValue("Mode", getModeName());
+                setMode(note - PAD_1);
             }
             else if (setChannelFromNote(note))
             {
@@ -139,6 +163,7 @@ public:
         if (control == 64) // when pressin sustain button
         {
             modeSustainPressed = value == 127;
+            // Serial.println("Mode sustain");
             display->displayValue("Mode", getModeName());
             return;
         }

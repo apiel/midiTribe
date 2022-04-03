@@ -136,11 +136,11 @@ void midiLoop()
 
         switch (type)
         {
-        case usbMIDI.NoteOff: // 0x80
+        case usbMIDI.NoteOn: // 0x90
             noteOnController(channel, data1, data2);
             break;
 
-        case usbMIDI.NoteOn: // 0x90
+        case usbMIDI.NoteOff: // 0x80
             noteOffController(channel, data1, data2);
             break;
 
@@ -168,6 +168,7 @@ void midiLoop()
                 midiController->setHandleNoteOn(noteOnController);
                 midiController->setHandleNoteOff(noteOffController);
                 midiController->setHandleControlChange(controlChangeController);
+                controller.setMidiController(midiController);
             }
             // 0944 = 2372, 012D = 301 Korg electribe2
             else if (midi[n].idVendor() == 2372 && midi[n].idProduct() == 301)
