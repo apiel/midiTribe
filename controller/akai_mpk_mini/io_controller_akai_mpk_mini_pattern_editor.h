@@ -26,7 +26,11 @@ protected:
         }
         else
         {
-            snprintf(name, 70, "%s%s%d ", name, getNote2Str(editor->getStep(pos)->note), getNoteOctave(editor->getStep(pos)->note));
+            snprintf(name, 70, "%s%s%d%c", name, 
+                getNote2Str(editor->getStep(pos)->note), 
+                getNoteOctave(editor->getStep(pos)->note),
+                editor->getStep(pos)->slide ? '^' : ' '
+            );
         }
     }
 
