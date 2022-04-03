@@ -79,7 +79,11 @@ public:
         mode = pos % MODE_COUNT;
         display->displayValue("Mode", getModeName());
         // Serial.println("Set mode");
+        render();
+    }
 
+    void render()
+    {
         switch (mode)
         {
         case MODE_LIVE_LOOP:
@@ -108,6 +112,7 @@ public:
             else if (setChannelFromNote(note))
             {
                 display->displayValue("Channel", currentChannel);
+                render();
             }
             else
             {

@@ -31,27 +31,14 @@ function onMIDIFailure(error) {
     );
 }
 
-// document.getElementById('note').innerHTML = Array(255)
-//     .fill()
-//     .map(
-//         (_, key) =>
-//             `<option value="${(key + 24) % 255}">${(key + 24) % 255}</option>`,
-//     )
-//     .join('');
-
-// document.getElementById('send').onclick = () => {
-//     const { value: data } = document.getElementById('data');
-//     const { value: key } = document.getElementById('output');
-//     const output = midi.outputs.get(key);
-//     const msg = JSON.parse(data);
-//     console.log(`Send to ${output.name}:`, msg);
-//     output.send(msg);
-// };
-
 function getOutput() {
     const { value: key } = document.getElementById('output');
     return midi.outputs.get(key);
 }
+
+document.getElementById('channel').onchange = ({ target: { value } }) => {
+    sendSustain(value, false);
+};
 
 document.querySelectorAll('#pad button, #keyboard button').forEach((bt) => {
     const { channel, note } = bt.dataset;
@@ -68,10 +55,12 @@ document.querySelectorAll('#mode button').forEach((bt) => {
     const { note } = bt.dataset;
 
     // 0xB0 = 176 note on ch1
-    bt.onclick = () => {
-        getOutput().send([0xb0, 64, 127]);
-        // 0x90 = 144 note on ch1 + 9 for ch10
-        getOutput().send([153, Number(note), 100]);
-        getOutput().send([0xb0, 64, 0]);
-    };
+    bt.onclick = () => sendSustain(note);
 });
+
+function sendSustain(note, pad = true) {
+    getOutput().send([0xb0, 64, 127]);
+    // 0x90 = 144 note on ch1 + 9 for ch10
+    getOutput().send([pad ? 153 : 144, Number(note), 100]);
+    getOutput().send([0xb0, 64, 0]);
+}

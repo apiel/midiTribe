@@ -12,6 +12,7 @@ protected:
     IO_Display *display;
     MIDIDevice_BigBuffer *midiGroovebox = NULL;
     byte *currentChannel;
+    char var[12];
 
 public:
     IO_ControllerAkaiMPKminiLiveSynth(IO_Display *_display, byte *_currentChannel)
@@ -22,7 +23,11 @@ public:
 
     void render()
     {
-        display->setDefaultName("Live Synth", 0);
+        display->setDefaultName("Live Synth\n\n", 0);
+
+        snprintf(var, 12, "Channel %02d", *currentChannel);
+        Serial.println(var);
+        display->setDefaultValue(var);
     }
 
     void setMidiGroovebox(MIDIDevice_BigBuffer *_midi)
@@ -41,7 +46,9 @@ public:
         if (midiGroovebox)
         {
             midiGroovebox->sendNoteOn(note, velocity, *currentChannel);
-        } else {
+        }
+        else
+        {
             display->displayValue("Please connect", "Groovebox");
         }
     }
@@ -58,7 +65,9 @@ public:
         if (midiGroovebox)
         {
             midiGroovebox->sendNoteOff(note, velocity, *currentChannel);
-        } else {
+        }
+        else
+        {
             display->displayValue("Please connect", "Groovebox");
         }
     }

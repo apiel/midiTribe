@@ -28,6 +28,8 @@ protected:
 
     byte minVelocity = 100;
 
+    char var[12];
+
 public:
     IO_ControllerAkaiMPKminiLiveLoop(IO_Display *_display, IO_Poly_Loop **_loops, byte *_currentChannel)
     {
@@ -38,14 +40,18 @@ public:
 
     void render()
     {
-        display->setDefaultName("Live Loop", 0);
+        display->setDefaultName("Live Loop\n\n", 0);
+
+        snprintf(var, 12, "Channel %02d", *currentChannel);
+        Serial.println(var);
+        display->setDefaultValue(var);
     }
 
-// NOTE
-// Maybe to complicated?
-// Pad might still do like synth, the 8 pads are for channel selection
-// if press again change mode from loop to single
-// if press and in the same time press note then select pattern
+    // NOTE
+    // Maybe to complicated?
+    // Pad might still do like synth, the 8 pads are for channel selection
+    // if press again change mode from loop to single
+    // if press and in the same time press note then select pattern
 
     void noteOnHandler(byte channel, byte note, byte velocity)
     {
@@ -138,7 +144,7 @@ public:
             minVelocity = max(value, 10);
             display->displayValue("Min velocity", minVelocity);
         }
-        else if (between(control,17, 20))
+        else if (between(control, 17, 20))
         {
             setPatternSelector(control - 17, (value / 128.0f) * PATTERN_COUNT);
         }
