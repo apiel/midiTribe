@@ -15,7 +15,7 @@ protected:
     IO_Display *display;
     IO_PatternEditor *editor;
 
-    char val[7];
+    char val[10];
     char val2[7];
 
 public:
@@ -27,16 +27,16 @@ public:
 
     void render()
     {
-        display->setDefaultName("Pattern Editor\n\nStep     Note\n\n ");
+        display->setDefaultName("Pattern Editor\n\n\n\nStep      Note\n\n ");
         if (editor->getStep()->note == 0)
         {
-            snprintf(val, 7, "%02d --", editor->stepPos + 1);
+            snprintf(val, 10, "%02d   --", editor->stepPos + 1);
         }
         else
         {
-            snprintf(val, 7, "%02d %s%d", editor->stepPos + 1, getNoteStr(editor->getStep()->note), getNoteOctave(editor->getStep()->note));
+            snprintf(val, 10, "%02d   %s%d", editor->stepPos + 1, getNoteStr(editor->getStep()->note), getNoteOctave(editor->getStep()->note));
         }
-        display->setDefaultValue(val, 3);
+        display->setDefaultValue(val, 2);
     }
 
     // TODO play midi note in the same time
@@ -46,6 +46,7 @@ public:
     {
         if (channel == PAD_CHANNEL) {
             // TODO use pad to set slid on current and previous step
+            // TODO set empty step
             return;
         }
         editor->getStep()->note = note;
