@@ -61,8 +61,7 @@ document.querySelectorAll('#mode button').forEach((bt) => {
 document.querySelectorAll('#pot input').forEach((slide) => {
     const { control } = slide.dataset;
 
-    slide.onchange = ({ target: { value } }) => {
-        console.log(control, value);
+    slide.oninput = ({ target: { value } }) => {
         getOutput().send([0xB0, Number(control), Number(value)]);
     };
 });
