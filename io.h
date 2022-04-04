@@ -13,6 +13,7 @@ void ioInit()
     display.init();
 
     midiInit();
+    editor.load();
 
     display.update();
 }

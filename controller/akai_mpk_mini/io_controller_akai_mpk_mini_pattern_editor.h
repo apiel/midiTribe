@@ -8,6 +8,7 @@
 #include "io_pattern_editor.h"
 #include "note.h"
 #include "io_controller_akai_mpk_mini_def.h"
+#include "io_utils.h"
 
 class IO_ControllerAkaiMPKminiPatternEditor
 {
@@ -26,18 +27,11 @@ protected:
         }
         else
         {
-            snprintf(name, 70, "%s%s%d%c", name, 
-                getNote2Str(editor->getStep(pos)->note), 
-                getNoteOctave(editor->getStep(pos)->note),
-                editor->getStep(pos)->slide ? '^' : ' '
-            );
+            snprintf(name, 70, "%s%s%d%c", name,
+                     getNote2Str(editor->getStep(pos)->note),
+                     getNoteOctave(editor->getStep(pos)->note),
+                     editor->getStep(pos)->slide ? '^' : ' ');
         }
-    }
-
-    byte mod(int8_t a, byte b)
-    {
-        int8_t c = a % b;
-        return (c < 0) ? c + b : c;
     }
 
 public:
@@ -82,10 +76,33 @@ public:
         {
             // TODO use pad to set slid on current and previous step
             // TODO set empty step
+            if (note == PAD_1)
+            {
+                editor->setNote(0);
+            }
+            else if (note == PAD_2)
+            {
+                if (editor->save())
+                {
+                    display->displayValue("Pattern", "Saved");
+                }
+                else
+                {
+                    display->displayValue("Pattern", "Save error");
+                }
+            }
+            else if (note == PAD_5)
+            {
+                editor->toggleSlide(-1);
+            }
+            else if (note == PAD_6)
+            {
+                editor->toggleSlide();
+            }
+            render();
             return;
         }
-        editor->getStep()->note = note;
-        editor->stepPos = (editor->stepPos + 1) % editor->pattern->stepCount;
+        editor->setNote(note);
         render();
     }
 

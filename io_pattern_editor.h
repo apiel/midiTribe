@@ -7,6 +7,7 @@
 #include "io_patterns.h"
 #include "Pattern.h"
 #include "Step.h"
+#include "io_utils.h"
 
 class IO_PatternEditor
 {
@@ -16,14 +17,16 @@ protected:
     // TODO
     // load pattern from electribe using sysex
 
-    // TODO
-    // edit pattern manually with PAD and Keyboard
-
 public:
     byte patternPos = 0;
     Pattern *pattern = &patterns[patternPos];
 
     byte stepPos = 0;
+
+    IO_PatternEditor()
+    {
+        // load();
+    }
 
     void setPattern(byte pos)
     {
@@ -44,7 +47,19 @@ public:
 
     Step *getStep(byte pos)
     {
-        return &pattern->steps[(stepPos + pos) % pattern->stepCount];
+        return &pattern->steps[mod(stepPos + pos, pattern->stepCount)];
+    }
+
+    void setNote(byte note)
+    {
+        getStep()->note = note;
+        stepPos = (stepPos + 1) % pattern->stepCount;
+    }
+
+    void toggleSlide(byte pos = 0)
+    {
+        Step *step = &pattern->steps[mod(stepPos + pos, pattern->stepCount)];
+        step->slide = !step->slide;
     }
 
     void load()

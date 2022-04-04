@@ -3,7 +3,13 @@
 
 #include <Arduino.h>
 
-#define between(x, a, b)  (((a) <= (x)) && ((x) <= (b)))
+#define between(x, a, b) (((a) <= (x)) && ((x) <= (b)))
+
+byte mod(int8_t a, byte b)
+{
+    int8_t c = a % b;
+    return (c < 0) ? c + b : c;
+}
 
 // bool intArrayStartWith(const uint8_t *start, const uint8_t *data, byte ignore)
 // {
