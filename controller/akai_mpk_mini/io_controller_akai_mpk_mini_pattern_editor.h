@@ -68,14 +68,10 @@ public:
     }
 
     // TODO play midi note in the same time
-    // TODO pressing note should set note and increment pos
-    // TODO use pad as well to increment from one empty step
     void noteOnHandler(byte channel, byte note, byte velocity)
     {
         if (channel == PAD_CHANNEL)
         {
-            // TODO use pad to set slid on current and previous step
-            // TODO set empty step
             if (note == PAD_1)
             {
                 editor->setNote(0);

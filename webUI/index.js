@@ -58,6 +58,15 @@ document.querySelectorAll('#mode button').forEach((bt) => {
     bt.onclick = () => sendSustain(note);
 });
 
+document.querySelectorAll('#pot input').forEach((slide) => {
+    const { control } = slide.dataset;
+
+    slide.onchange = ({ target: { value } }) => {
+        console.log(control, value);
+        getOutput().send([0xB0, Number(control), Number(value)]);
+    };
+});
+
 function sendSustain(note, pad = true) {
     getOutput().send([0xb0, 64, 127]);
     // 0x90 = 144 note on ch1 + 9 for ch10
