@@ -43,7 +43,7 @@ public:
 
     void render()
     {
-        snprintf(name, 70, "Pattern Editor\n\n");
+        snprintf(name, 70, "Pattern Editor %2d\n\n", editor->patternPos);
         addNoteToName(-2);
         addNoteToName(-1);
         addNoteToName(0);

@@ -22,11 +22,13 @@ public:
     void setMidiGroovebox(MIDIDevice_BigBuffer *_midi)
     {
         midiGroovebox = _midi;
+        render();
     }
 
     void setMidiController(MIDIDevice_BigBuffer *_midi)
     {
         midiController = _midi;
+        render();
     }
 
     void render()

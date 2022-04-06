@@ -80,6 +80,7 @@ public:
                 File file = SD.open(filePath);
                 if (file)
                 {
+                    // Serial.println(filePath);
                     setPattern(pos);
                     pattern->stepCount = 1;
                     getStep()->reset();
@@ -87,6 +88,7 @@ public:
                     while (file.available())
                     {
                         char c = file.read();
+                        // Serial.print(c);
                         if (c == ' ' || c == '\n' || c == '*')
                         {
                             stepPos++;
@@ -148,6 +150,7 @@ public:
         {
             char filePath[14];
             snprintf(filePath, 14, "patterns/%03d.pat", patternPos);
+            SD.remove(filePath);
             File file = SD.open(filePath, FILE_WRITE);
 
             if (file)
@@ -160,9 +163,10 @@ public:
                         file.print(' ');
                     }
 
-                    Step *step = getStep();
+                    Step *step = getStep(pos);
                     file.print(getNoteStr(step->note));
-                    file.print('0' + getNoteOctave(step->note));
+                    file.print(getNoteOctave(step->note));
+                    // Serial.printf("%s %d\n",getNoteStr(step->note), getNoteOctave(step->note));
                     if (step->slide)
                     {
                         file.print('_');

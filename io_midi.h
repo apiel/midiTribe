@@ -164,25 +164,31 @@ void midiLoop()
             // Vendor 0: 2536 124 MPK mini
             if (midi[n].idVendor() == 2536 && midi[n].idProduct() == 124)
             {
-                midiController = &midi[n];
-                midiController->setHandleNoteOn(noteOnController);
-                midiController->setHandleNoteOff(noteOffController);
-                midiController->setHandleControlChange(controlChangeController);
-                controller.setMidiController(midiController);
+                if (!midiController)
+                {
+                    midiController = &midi[n];
+                    midiController->setHandleNoteOn(noteOnController);
+                    midiController->setHandleNoteOff(noteOffController);
+                    midiController->setHandleControlChange(controlChangeController);
+                    controller.setMidiController(midiController);
+                }
             }
             // 0944 = 2372, 012D = 301 Korg electribe2
             else if (midi[n].idVendor() == 2372 && midi[n].idProduct() == 301)
             {
-                midiGroovebox = &midi[n];
-                midiGroovebox->setHandleNoteOn(noteOnController);
-                midiGroovebox->setHandleNoteOff(noteOffController);
-                midiGroovebox->setHandleControlChange(controlChangeController);
-                midiGroovebox->setHandleSysEx(sysExHandlerGroovebox);
-                midiGroovebox->setHandleClock(clockHandlerGroovebox);
-                controller.setMidiGroovebox(midiGroovebox);
-                for (byte i = 0; i < 16; i++)
+                if (!midiGroovebox)
                 {
-                    loopsPtr[i]->setMidi(midiGroovebox);
+                    midiGroovebox = &midi[n];
+                    midiGroovebox->setHandleNoteOn(noteOnController);
+                    midiGroovebox->setHandleNoteOff(noteOffController);
+                    midiGroovebox->setHandleControlChange(controlChangeController);
+                    midiGroovebox->setHandleSysEx(sysExHandlerGroovebox);
+                    midiGroovebox->setHandleClock(clockHandlerGroovebox);
+                    controller.setMidiGroovebox(midiGroovebox);
+                    for (byte i = 0; i < 16; i++)
+                    {
+                        loopsPtr[i]->setMidi(midiGroovebox);
+                    }
                 }
             }
         }
