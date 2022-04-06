@@ -23,11 +23,6 @@ public:
 
     byte stepPos = 0;
 
-    IO_PatternEditor()
-    {
-        // load();
-    }
-
     void setPattern(byte pos)
     {
         stepPos = 0;

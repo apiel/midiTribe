@@ -12,6 +12,8 @@ void ioInit()
     Serial.println("Mini synth init");
     display.init();
 
+    initCore();
+
     midiInit();
     editor.load();
 

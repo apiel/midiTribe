@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <USBHost_t36.h>
+#include <EEPROM.h>
 
 #include "Pattern.h"
 #include "io_patterns.h"
@@ -14,6 +15,7 @@ class IO_Loop
 {
 protected:
     byte currentStep = 0;
+    uint16_t eepromAddress = 0;
     Step lastStep;
     MIDIDevice_BigBuffer *midiGroovebox = NULL;
     byte velocity = 100;
@@ -78,7 +80,7 @@ public:
     byte play = 0;
     byte previousLoopNote = 0;
 
-    byte patternSelector[PATTERN_SELECTOR_COUNT] = {2, 1, 0, 0};
+    byte patternSelector[PATTERN_SELECTOR_COUNT] = {0, 0, 0, 0};
     byte currentPatternSelector = 0;
     byte nextPattern = 0;
     Pattern *pattern = &patterns[nextPattern];
@@ -93,9 +95,24 @@ public:
         midiGroovebox = _midiGroovebox;
     }
 
+    void load(byte pos)
+    {
+        // Serial.printf("Load loop pads %d\n", pos);
+        eepromAddress = pos * PATTERN_SELECTOR_COUNT;
+        for (byte i = 0; i < PATTERN_SELECTOR_COUNT; i++)
+        {
+            byte val = EEPROM.read(eepromAddress + i);
+            patternSelector[i] = val == 255 ? 0 : val % PATTERN_COUNT;
+            // Serial.printf("- %d %d\n", eepromAddress + i, patternSelector[i]);
+        }
+    }
+
     void setPatternSelector(byte pos, byte value)
     {
-        patternSelector[pos % PATTERN_SELECTOR_COUNT] = value % PATTERN_COUNT;
+        pos = pos % PATTERN_SELECTOR_COUNT;
+        patternSelector[pos] = value % PATTERN_COUNT;
+        EEPROM.write(eepromAddress + pos, patternSelector[pos]);
+        // Serial.printf("save pads %d %d\n", eepromAddress + pos, patternSelector[pos]);
     }
 
     void setCurrentPatternSelector(byte value)

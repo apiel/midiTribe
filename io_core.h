@@ -32,4 +32,12 @@ void clockHandler()
     clockCount = (clockCount + 1) % 6;
 }
 
+void initCore()
+{
+    for (byte i = 0; i < 16; i++)
+    {
+        loopsPtr[i]->load(i);
+    }
+}
+
 #endif

@@ -28,7 +28,7 @@ protected:
 
     byte minVelocity = 100;
 
-    char var[12];
+    char var[35];
 
 public:
     IO_ControllerAkaiMPKminiLiveLoop(IO_Display *_display, IO_Poly_Loop **_loops, byte *_currentChannel)
@@ -42,8 +42,11 @@ public:
     {
         display->setDefaultName("Live Loop\n\n", 0);
 
-        snprintf(var, 12, "Channel %02d", *currentChannel);
-        Serial.println(var);
+        snprintf(var, 35, "Channel %02d\n\n%02d %02d %02d %02d\n\nPlay %2d", *currentChannel,
+                 getLoop()->getPatternAtBank(0), getLoop()->getPatternAtBank(1),
+                 getLoop()->getPatternAtBank(2), getLoop()->getPatternAtBank(3),
+                 getLoop()->getCurrentPattern());
+        // Serial.println(var);
         display->setDefaultValue(var);
     }
 
@@ -71,7 +74,7 @@ public:
 
         if (isTopPadPressed())
         {
-            setPatternSelector(topPadPressed, note);
+            setPatternSelector(topPadPressed, note - 48);
             topPadPressedDidAction = true;
         }
         else
@@ -83,6 +86,7 @@ public:
     void setPatternSelector(byte bankPos, byte patternPos)
     {
         getLoop()->setPatternSelector(bankPos, patternPos);
+        render();
         display->displayValue("Pattern selector", getLoop()->getPatternAtBank(bankPos));
     }
 
@@ -110,6 +114,7 @@ public:
         else
         {
             *currentChannel = channelStart + padValue;
+            render();
             display->displayValue("Channel", *currentChannel);
         }
     }
@@ -123,6 +128,7 @@ public:
                 if (!topPadPressedDidAction)
                 {
                     getLoop()->setCurrentPatternSelector(note - PAD_5);
+                    render();
                     display->displayValue("Select pattern", getLoop()->getCurrentPattern());
                 }
             }
