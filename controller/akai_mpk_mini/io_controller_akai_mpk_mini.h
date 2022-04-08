@@ -7,9 +7,11 @@
 #include "io_loop_poly.h"
 #include "io_pattern_editor.h"
 #include "io_display.h"
+#include "io_arp.h"
 #include "io_controller_akai_mpk_mini_lock.h"
 #include "io_controller_akai_mpk_mini_live_loop.h"
 #include "io_controller_akai_mpk_mini_live_synth.h"
+#include "io_controller_akai_mpk_mini_live_arp.h"
 #include "io_controller_akai_mpk_mini_pattern_editor.h"
 #include "io_controller_akai_mpk_mini_def.h"
 
@@ -18,6 +20,7 @@ enum
     MODE_LOCK,
     MODE_LIVE_LOOP,
     MODE_LIVE_SYNTH,
+    MODE_LIVE_ARP,
     MODE_PATTERN_EDITOR,
     MODE_COUNT
 };
@@ -33,6 +36,7 @@ protected:
     byte currentChannel = 1;
 
     IO_ControllerAkaiMPKminiLock modeLock;
+    IO_ControllerAkaiMPKminiLiveArp modeLiveArp;
     IO_ControllerAkaiMPKminiLiveLoop modeLiveLoop;
     IO_ControllerAkaiMPKminiLiveSynth modeLiveSynth;
     IO_ControllerAkaiMPKminiPatternEditor modePattermEditor;
@@ -49,15 +53,21 @@ protected:
             return "Live Synth";
         case MODE_PATTERN_EDITOR:
             return "Pattern Editor";
+        case MODE_LIVE_ARP:
+            return "Live ARP";
         }
         return "Unknown";
     }
 
 public:
-    IO_ControllerAkaiMPKmini(IO_Display *_display, IO_Poly_Loop **_loops, IO_PatternEditor *_editor) : modeLock(_display),
-                                                                                                       modeLiveLoop(_display, _loops, &currentChannel),
-                                                                                                       modeLiveSynth(_display, &currentChannel),
-                                                                                                       modePattermEditor(_display, _editor)
+    IO_ControllerAkaiMPKmini(IO_Display *_display,
+                             IO_Poly_Loop **_loops,
+                             IO_PatternEditor *_editor,
+                             IO_Arp *_arp) : modeLock(_display),
+                                             modeLiveArp(_display, &currentChannel, _arp),
+                                             modeLiveLoop(_display, _loops, &currentChannel),
+                                             modeLiveSynth(_display, &currentChannel),
+                                             modePattermEditor(_display, _editor)
     {
         display = _display;
         setMode(mode);
@@ -67,6 +77,7 @@ public:
     {
         modeLiveSynth.setMidiGroovebox(_midi);
         modeLock.setMidiGroovebox(_midi);
+        modeLiveArp.setMidiGroovebox(_midi);
     }
 
     void setMidiController(MIDIDevice_BigBuffer *_midi)
@@ -97,6 +108,9 @@ public:
             break;
         case MODE_PATTERN_EDITOR:
             modePattermEditor.render();
+            break;
+        case MODE_LIVE_ARP:
+            modeLiveArp.render();
             break;
         }
     }
@@ -135,6 +149,9 @@ public:
         case MODE_PATTERN_EDITOR:
             modePattermEditor.noteOnHandler(channel, note, velocity);
             break;
+        case MODE_LIVE_ARP:
+            modeLiveArp.noteOnHandler(channel, note, velocity);
+            break;
         }
     }
 
@@ -159,6 +176,9 @@ public:
             break;
         case MODE_PATTERN_EDITOR:
             modePattermEditor.noteOffHandler(channel, note, velocity);
+            break;
+        case MODE_LIVE_ARP:
+            modeLiveArp.noteOffHandler(channel, note, velocity);
             break;
         }
     }
@@ -192,6 +212,9 @@ public:
             break;
         case MODE_PATTERN_EDITOR:
             modePattermEditor.controlChangeHandler(channel, control, value);
+            break;
+        case MODE_LIVE_ARP:
+            modeLiveArp.controlChangeHandler(channel, control, value);
             break;
         }
     }

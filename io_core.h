@@ -3,6 +3,7 @@
 
 #include "io_display.h"
 #include "io_loop_poly.h"
+#include "io_arp.h"
 #include "controller/akai_mpk_mini/io_controller_akai_mpk_mini.h"
 
 IO_Poly_Loop loop0, loop1, loop2, loop3, loop4, loop5, loop6, loop7,
@@ -14,18 +15,21 @@ IO_Poly_Loop *loopsPtr[16] = {
 
 IO_PatternEditor editor;
 
-IO_ControllerAkaiMPKmini controller(&display, loopsPtr, &editor);
+IO_Arp arp;
+
+IO_ControllerAkaiMPKmini controller(&display, loopsPtr, &editor, &arp);
 
 byte clockCount = 0;
 void clockHandler()
 {
     if (clockCount == 0)
     {
-        // clock is not right
+        // clock is not right??
         for (byte i = 0; i < 16; i++)
         {
             loopsPtr[i]->next();
         }
+        arp.next();
     }
     // Clock events are sent at a rate of 24 pulses per quarter note
     // 4 * 6 = 24
